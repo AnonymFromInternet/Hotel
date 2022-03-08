@@ -1,0 +1,26 @@
+{{template "base" .}}
+
+{{define "content"}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>This is a main page</h1>
+                <p>Some text</p>
+
+                <p>This is data from handler: {{index .StringMap "test"}}</p>
+
+                <p>
+                    {{if ne (index .StringMap "test") ""}}
+                        Your IP Address is: {{index .StringMap "test"}}
+                    {{else}}
+                        I do not know your IP Address
+                    {{end}}
+                </p>
+            </div>
+        </div>
+    </div>
+{{end}}
+<!-- index означает данные, которые могут быть проиндексированы (т.е. коллекции разных типов)-->
+<!-- Или он означает тип данных индекс или ключ в коллекции -->
+<!-- index .StringMap "test" означает получение из приходящих из метода Execute данных, обработка находящейся там коллекции, и получение значения свойства StringMap по ключу "test" -->
+<!-- if ne (property) value Означает, если property не равно value -->
