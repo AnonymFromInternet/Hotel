@@ -1,0 +1,16 @@
+.footer {
+    height: 36px;
+    background-color: #398AB9;
+    margin-top: 15px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+h5 {
+    margin: 0;
+    font-size: 15px;
+}
+#button {
+    margin-top: 6px;
+}
