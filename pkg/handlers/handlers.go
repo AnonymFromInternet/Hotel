@@ -34,3 +34,22 @@ func (m *Repository) AboutPage(writer http.ResponseWriter, request *http.Request
 	stringMap["test"] = "About Page"
 	render.RenderTemplate(writer, "about.page.gohtml", &models.TemplateData{StringMap: stringMap})
 }
+
+func (m *Repository) PresidentPage(writer http.ResponseWriter, request *http.Request) {
+	render.RenderTemplate(writer, "president.page.gohtml", &models.TemplateData{})
+}
+func (m *Repository) BusinessPage(writer http.ResponseWriter, request *http.Request) {
+
+	render.RenderTemplate(writer, "business.page.gohtml", &models.TemplateData{})
+}
+
+func (m *Repository) Availability(writer http.ResponseWriter, request *http.Request) {
+	render.RenderTemplate(writer, "calender.page.gohtml", &models.TemplateData{})
+}
+
+func (m *Repository) Contacts(writer http.ResponseWriter, request *http.Request) {
+	render.RenderTemplate(writer, "contacts.page.gohtml", &models.TemplateData{})
+}
+func (m *Repository) PersonalData(writer http.ResponseWriter, request *http.Request) {
+	render.RenderTemplate(writer, "personal-data.page.gohtml", &models.TemplateData{})
+}
