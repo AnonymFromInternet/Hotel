@@ -3,8 +3,8 @@ package render
 import (
 	"bytes"
 	"fmt"
-	"github.com/anonymfrominternet/Hotel/pkg/config"
-	"github.com/anonymfrominternet/Hotel/pkg/models"
+	"github.com/anonymfrominternet/Hotel/internal/config"
+	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/justinas/nosurf"
 	"html/template"
 	"log"

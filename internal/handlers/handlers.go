@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/anonymfrominternet/Hotel/pkg/config"
-	"github.com/anonymfrominternet/Hotel/pkg/models"
-	"github.com/anonymfrominternet/Hotel/pkg/render"
+	"github.com/anonymfrominternet/Hotel/internal/config"
+	"github.com/anonymfrominternet/Hotel/internal/models"
+	"github.com/anonymfrominternet/Hotel/internal/render"
 	"net/http"
 )
 

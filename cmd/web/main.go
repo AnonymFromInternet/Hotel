@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/alexedwards/scs/v2"
-	"github.com/anonymfrominternet/Hotel/pkg/config"
-	"github.com/anonymfrominternet/Hotel/pkg/handlers"
-	"github.com/anonymfrominternet/Hotel/pkg/render"
+	"github.com/anonymfrominternet/Hotel/internal/config"
+	"github.com/anonymfrominternet/Hotel/internal/handlers"
+	"github.com/anonymfrominternet/Hotel/internal/render"
 	"log"
 	"net/http"
 	"time"

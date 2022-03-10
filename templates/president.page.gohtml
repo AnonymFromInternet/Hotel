@@ -1,4 +1,4 @@
-{{template "base"}}
+{{template "base" .}}
 
 {{define "content"}}
 
@@ -39,7 +39,32 @@
                 </div>
             </form>
         `
-            custom({html, title: "Choose Your Dates"})
+            custom({
+                html,
+                title: "Choose Your Dates",
+                willOpen: () => {
+                    const elem = document.getElementById("reservation-dates-modal")
+                    const rp = new DateRangePicker(elem, {
+                        showOnFocus: true
+                    })
+                },
+                didOpen: () => {
+                    document.getElementById("start").removeAttribute("disabled")
+                    document.getElementById("end").removeAttribute("disabled")
+                },
+                callback: function (result) {
+                    console.log("Callback")
+                    let form = document.getElementById("check-availability-form")
+                    let formData = new FormData(form)
+                    formData.append("csrf_token", "{{.CSRFToken}}")
+
+                    fetch("/calender-json", { method: "post", body: formData })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data)
+                        })
+                }
+            })
         })
     </script>
 {{end}}
