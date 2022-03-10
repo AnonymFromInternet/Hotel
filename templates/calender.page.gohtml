@@ -1,13 +1,13 @@
-{{template "base"}}
+{{template "base" .}}
 
-{{define "content"}}
+{{define "content" }}
     <div class="container">
         <div class="row">
             <div class="col-md-3"></div>
             <div class="col-md-6">
                 <h1 class=" mt-4">Search for availability</h1>
                 <div id="foo">
-                    <form class="row needs-validation" novalidate>
+                    <form action="/calender" method="post" class="row needs-validation" novalidate>
                         <div class="col">
                             <input class="form-control" type="text" name="start" required placeholder="Starting Date">
                             <button id="button" type="submit" class="btn btn-primary">Search availability</button>
@@ -15,6 +15,7 @@
                         <div class="col">
                             <input class="form-control" type="text" name="end" required placeholder="Ending Date">
                         </div>
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                     </form>
                 </div>
             </div>

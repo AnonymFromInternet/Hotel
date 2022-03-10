@@ -30,7 +30,7 @@ func main() {
 
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Fatal("error in main / tc, err := render.CreateTemplateCache()")
+		log.Fatal("error in main / tc, err := render.CreateTemplateCache()", err)
 	}
 	app.TemplateCache = tc
 	app.UseCache = false
