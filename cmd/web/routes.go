@@ -27,7 +27,9 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Post("/calender-json", handlers.Repo.CalenderJSON)
 
 	mux.Get("/contacts", handlers.Repo.Contacts)
+
 	mux.Get("/personal-data", handlers.Repo.PersonalData)
+	mux.Post("/personal-data", handlers.Repo.PostPersonalData)
 
 	fileServer := http.FileServer(http.Dir("../../static/"))
 
