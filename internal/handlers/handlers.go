@@ -45,7 +45,6 @@ func (m *Repository) Calender(writer http.ResponseWriter, request *http.Request)
 	render.RenderTemplate(writer, request, "calender.page.gohtml", &models.TemplateData{})
 }
 
-// PostCalender - этот метод скорее всего удалить
 func (m *Repository) PostCalender(writer http.ResponseWriter, request *http.Request) {
 	start := request.Form.Get("start")
 	end := request.Form.Get("end")
