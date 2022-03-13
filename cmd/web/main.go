@@ -18,6 +18,21 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatal("error in method main / srv.ListenAndServe")
+	}
+}
+func run() error {
 	gob.Register(models.PersonalData{})
 
 	app.InProduction = false
@@ -44,12 +59,5 @@ func main() {
 
 	render.NewTemplates(&app)
 
-	srv := &http.Server{
-		Addr:    portNumber,
-		Handler: routes(&app),
-	}
-	err = srv.ListenAndServe()
-	if err != nil {
-		log.Fatal("error in method main / srv.ListenAndServe")
-	}
+	return nil
 }

@@ -49,7 +49,10 @@ func (r *Repository) Calender(writer http.ResponseWriter, request *http.Request)
 func (r *Repository) PostCalender(writer http.ResponseWriter, request *http.Request) {
 	start := request.Form.Get("start")
 	end := request.Form.Get("end")
-	writer.Write([]byte(fmt.Sprintf("Starting date is %s and ending date is %s", start, end)))
+	_, err := writer.Write([]byte(fmt.Sprintf("Starting date is %s and ending date is %s", start, end)))
+	if err != nil {
+		fmt.Println("Error in handlers / PostCalender / writer.Write")
+	}
 }
 
 type jsonResponse struct {

@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 )
 
+var pathToTemplates = "../../templates"
+
 var functions = template.FuncMap{}
 
 var app *config.AppConfig
@@ -56,7 +58,7 @@ func RenderTemplate(w http.ResponseWriter, request *http.Request, tmpl string, t
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
-	pages, err := filepath.Glob("../../templates/*.page.gohtml")
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.gohtml", pathToTemplates))
 	if err != nil {
 		fmt.Println("error in method RenderTemplateTest / filepath.Glob")
 		return cache, err
@@ -70,13 +72,13 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 			return cache, err
 		}
 
-		matches, err := filepath.Glob("../../templates/*.layout.gohtml")
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.gohtml", pathToTemplates))
 		if err != nil {
 			fmt.Println("error in method RenderTemplateTest / matches, err")
 			return cache, err
 		}
 		if len(matches) > 0 {
-			ts, err = ts.ParseGlob("../../templates/*.layout.gohtml")
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.gohtml", pathToTemplates))
 			if err != nil {
 				fmt.Println("error in method RenderTemplateTest / ts, err")
 				return cache, err
