@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-// Repository pattern
+// Repo Repository pattern
 var Repo *Repository
 
 type Repository struct {
