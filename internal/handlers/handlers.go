@@ -120,7 +120,6 @@ func (r *Repository) PostPersonalData(writer http.ResponseWriter, request *http.
 		data := make(map[string]interface{})
 		data["personalData"] = personalData
 
-		// Если нет err, то страница перерендевается и в Template помещаются данные. А что потом происходит с ними?
 		render.RenderTemplate(writer, request, "personal-data.page.gohtml", &models.TemplateData{
 			Form: form,
 			Data: data,
