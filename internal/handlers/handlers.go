@@ -28,9 +28,7 @@ func NewHandlers(r *Repository) {
 }
 
 func (r *Repository) MainPage(writer http.ResponseWriter, request *http.Request) {
-	render.RenderTemplate(writer, request, "main.page.gohtml", &models.TemplateData{
-		Data: map[string]interface{}{},
-	})
+	render.RenderTemplate(writer, request, "main.page.gohtml", &models.TemplateData{})
 }
 func (r *Repository) AboutPage(writer http.ResponseWriter, request *http.Request) {
 	render.RenderTemplate(writer, request, "about.page.gohtml", &models.TemplateData{})
