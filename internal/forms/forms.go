@@ -3,7 +3,6 @@ package forms
 import (
 	"fmt"
 	"github.com/asaskevich/govalidator"
-	"net/http"
 	"net/url"
 	"strings"
 )
@@ -21,10 +20,10 @@ func (f *Form) Valid() bool {
 func NewForm(data url.Values) *Form {
 	return &Form{
 		// This property holds inputted data from a form
-		Values: data,
+		data,
 		// This property holds inputted data from a form
 
-		Errors: map[string][]string{},
+		map[string][]string{},
 	}
 }
 
@@ -37,8 +36,8 @@ func (f *Form) Required(fields ...string) {
 	}
 
 }
-func (f *Form) MinLength(field string, minLength int, request *http.Request) bool {
-	x := request.Form.Get(field)
+func (f *Form) MinLength(field string, minLength int) bool {
+	x := f.Get(field)
 	if len(x) < minLength {
 		f.Errors.Add(field, fmt.Sprintf("Value is too small"))
 		return false
@@ -46,8 +45,8 @@ func (f *Form) MinLength(field string, minLength int, request *http.Request) boo
 	return true
 }
 
-func (f *Form) Has(field string, request *http.Request) bool {
-	x := request.Form.Get(field)
+func (f *Form) Has(field string) bool {
+	x := f.Get(field)
 	if x == "" {
 
 		return false

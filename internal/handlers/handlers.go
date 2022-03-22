@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/forms"
+	"github.com/anonymfrominternet/Hotel/internal/helpers"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
-	"log"
 	"net/http"
 )
 
@@ -45,14 +45,15 @@ func (r *Repository) Calender(writer http.ResponseWriter, request *http.Request)
 	render.RenderTemplate(writer, request, "calender.page.gohtml", &models.TemplateData{})
 }
 
-// PostCalender - этот метод скорее всего удалить
 func (r *Repository) PostCalender(writer http.ResponseWriter, request *http.Request) {
+	// Delete?
 	start := request.Form.Get("start")
 	end := request.Form.Get("end")
 	_, err := writer.Write([]byte(fmt.Sprintf("Starting date is %s and ending date is %s", start, end)))
 	if err != nil {
 		fmt.Println("Error in handlers / PostCalender / writer.Write")
 	}
+	// Delete?
 }
 
 type jsonResponse struct {
@@ -65,7 +66,7 @@ func (r *Repository) CalenderJSON(writer http.ResponseWriter, request *http.Requ
 
 	out, err := json.MarshalIndent(resp, "", "   ")
 	if err != nil {
-		fmt.Println("error in handlers / CalenderJSON /  out, err := json.MarshalIndent")
+		helpers.ServerError(writer, err)
 		return
 	}
 
@@ -73,7 +74,7 @@ func (r *Repository) CalenderJSON(writer http.ResponseWriter, request *http.Requ
 
 	_, err = writer.Write(out)
 	if err != nil {
-		fmt.Println("error in handlers / CalenderJSON / _, err = writer.Write(out)")
+		helpers.ServerError(writer, err)
 		return
 	}
 }
@@ -98,7 +99,7 @@ func (r *Repository) PersonalData(writer http.ResponseWriter, request *http.Requ
 func (r *Repository) PostPersonalData(writer http.ResponseWriter, request *http.Request) {
 	err := request.ParseForm()
 	if err != nil {
-		log.Printf("Error in handlers / PostPersonalData / err := request.ParseForm()")
+		helpers.ServerError(writer, err)
 		return
 	}
 
@@ -113,7 +114,7 @@ func (r *Repository) PostPersonalData(writer http.ResponseWriter, request *http.
 
 	//form.Has("first_name", request)
 	form.Required("first_name", "last_name", "email", "phone")
-	form.MinLength("first_name", 3, request)
+	form.MinLength("first_name", 3)
 	form.IsEmail("email")
 
 	if !form.Valid() {
@@ -134,7 +135,7 @@ func (r *Repository) PostPersonalData(writer http.ResponseWriter, request *http.
 func (r *Repository) AfterPersonalData(writer http.ResponseWriter, request *http.Request) {
 	personalData, ok := r.App.Session.Get(request.Context(), "personalData").(models.PersonalData)
 	if !ok {
-		fmt.Println("Error in type assertion: handlers / AfterPersonalData / personalData, ok := r.App.Session.Get")
+		r.App.ErrorLog.Println("Cannot get error from session")
 		r.App.Session.Put(request.Context(), "error", "Cannot get personalData from session")
 		http.Redirect(writer, request, "/", http.StatusTemporaryRedirect)
 		return
