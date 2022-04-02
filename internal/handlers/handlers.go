@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
+	"github.com/anonymfrominternet/Hotel/internal/driver"
 	"github.com/anonymfrominternet/Hotel/internal/forms"
 	"github.com/anonymfrominternet/Hotel/internal/helpers"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
+	"github.com/anonymfrominternet/Hotel/internal/repository"
+	dbrepo "github.com/anonymfrominternet/Hotel/internal/repository/dbRepo"
 	"net/http"
 )
 
@@ -16,11 +19,13 @@ var Repo *Repository
 
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 func NewHandlers(r *Repository) {
@@ -28,6 +33,7 @@ func NewHandlers(r *Repository) {
 }
 
 func (r *Repository) MainPage(writer http.ResponseWriter, request *http.Request) {
+
 	render.RenderTemplate(writer, request, "main.page.gohtml", &models.TemplateData{})
 }
 func (r *Repository) AboutPage(writer http.ResponseWriter, request *http.Request) {
