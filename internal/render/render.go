@@ -18,7 +18,7 @@ var functions = template.FuncMap{}
 
 var app *config.AppConfig
 
-func NewTemplates(a *config.AppConfig) {
+func NewRenderer(a *config.AppConfig) {
 	app = a
 }
 func AddDefaultData(td *models.TemplateData, request *http.Request) *models.TemplateData {
@@ -29,7 +29,7 @@ func AddDefaultData(td *models.TemplateData, request *http.Request) *models.Temp
 	return td
 }
 
-func RenderTemplate(w http.ResponseWriter, request *http.Request, tmpl string, td *models.TemplateData) {
+func Template(w http.ResponseWriter, request *http.Request, tmpl string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -51,7 +51,7 @@ func RenderTemplate(w http.ResponseWriter, request *http.Request, tmpl string, t
 
 	_, err := buf.WriteTo(w)
 	if err != nil {
-		fmt.Println("error in method RenderTemplate / buf.WriteTo", err)
+		fmt.Println("error in method Template / buf.WriteTo", err)
 	}
 }
 

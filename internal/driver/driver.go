@@ -9,17 +9,18 @@ import (
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
+// DB holds the database connection
 type DB struct {
 	SQL *sql.DB
 }
 
-var dataBaseConnection = &DB{}
+var dBConnection = &DB{}
 
 const maxOpenedDBConnections = 33
 const maxIdleDBConnections = 5
 const maxDBConnectionLifeTime = 5 * time.Minute
 
-// ConnectSQL returns an DB type object which contains database
+// ConnectSQL returns a pointer to an DB type object which contains a connection
 func ConnectSQL(dataSourceName string) (*DB, error) {
 	connection, err := NewDatabase(dataSourceName)
 	if err != nil {
@@ -32,14 +33,14 @@ func ConnectSQL(dataSourceName string) (*DB, error) {
 	connection.SetConnMaxLifetime(maxDBConnectionLifeTime)
 	// Connection Settings
 
-	dataBaseConnection.SQL = connection
+	dBConnection.SQL = connection
 
 	err = testConnection(connection)
 	if err != nil {
 		return nil, err
 	}
 
-	return dataBaseConnection, nil
+	return dBConnection, nil
 }
 
 // testConnection tries to ping the database

@@ -41,7 +41,10 @@ func main() {
 	}
 }
 func run() (*driver.DB, error) {
-	gob.Register(models.PersonalData{})
+	gob.Register(models.Reservation{})
+	gob.Register(models.User{})
+	gob.Register(models.Room{})
+	gob.Register(models.Restriction{})
 
 	app.InProduction = false
 
@@ -61,12 +64,13 @@ func run() (*driver.DB, error) {
 	app.Session = session
 	// State Section
 
-	// Connect to database
+	// Connect to database:
 	fmt.Println("Connecting to database...")
 	connection, err := driver.ConnectSQL(dsn)
 	if err != nil {
 		log.Fatal("Cannot connect to database: in main run() driver.ConnectSQL()")
 	}
+	// Connect to database
 
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
@@ -77,9 +81,9 @@ func run() (*driver.DB, error) {
 	app.TemplateCache = tc
 	app.UseCache = false
 
-	repo := handlers.NewRepo(&app, connection)
+	repo := handlers.NewTemplates(&app, connection)
 	handlers.NewHandlers(repo)
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 	helpers.NewHelpers(&app)
 
 	return connection, nil

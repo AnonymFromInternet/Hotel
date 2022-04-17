@@ -22,15 +22,15 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/president", handlers.Repo.PresidentPage)
 	mux.Get("/business", handlers.Repo.BusinessPage)
 
-	mux.Get("/calender", handlers.Repo.Calender)
-	mux.Post("/calender", handlers.Repo.PostCalender)
-	mux.Post("/calender-json", handlers.Repo.CalenderJSON)
+	mux.Get("/calender", handlers.Repo.Calendar)
+	mux.Post("/calender", handlers.Repo.PostCalendar)
+	mux.Post("/calender-json", handlers.Repo.CalendarJSON)
 
 	mux.Get("/contacts", handlers.Repo.Contacts)
 
-	mux.Get("/personal-data", handlers.Repo.PersonalData)
-	mux.Post("/personal-data", handlers.Repo.PostPersonalData)
-	mux.Get("/after-personal-data", handlers.Repo.AfterPersonalData)
+	mux.Get("/personal-data", handlers.Repo.Reservation)
+	mux.Post("/personal-data", handlers.Repo.PostReservation)
+	mux.Get("/after-personal-data", handlers.Repo.ReservationSummary)
 
 	fileServer := http.FileServer(http.Dir("../../static/"))
 
