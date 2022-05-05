@@ -3,18 +3,31 @@ package render
 import (
 	"bytes"
 	"fmt"
+	"github.com/anonymfrominternet/Hotel/internal/config"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 )
 
+var appConfig *config.AppConfig
+
+// NewTemplates sets the value of the var appConfig
+func NewTemplates(appConfigAsParam *config.AppConfig) {
+	appConfig = appConfigAsParam
+}
+
 var functions = template.FuncMap{}
 
 func Template(w http.ResponseWriter, tmplName string) {
-	templateCache, err := createTemplateCache()
-	if err != nil {
-		log.Fatal("error in render package in Template() in templateCache, err := createTemplateCache()")
+	// Get the template cache from the app config
+	var templateCache map[string]*template.Template
+	var err error
+
+	if appConfig.UseCache {
+		templateCache = appConfig.TemplateCache
+	} else {
+		templateCache, err = CreateTemplateCache()
 	}
 
 	tmpl, exist := templateCache[tmplName]
@@ -35,8 +48,8 @@ func Template(w http.ResponseWriter, tmplName string) {
 	}
 }
 
-// createTemplateCache creates map with templates
-func createTemplateCache() (map[string]*template.Template, error) {
+// CreateTemplateCache creates map with templates
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
 	pages, err := filepath.Glob("../../templates/*.page.tmpl")
