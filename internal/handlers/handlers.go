@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/anonymfrominternet/Hotel/internal/config"
+	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
 	"net/http"
 )
@@ -26,8 +27,12 @@ func NewHandlers(repo *Repository) {
 }
 
 func (repo *Repository) MainPage(writer http.ResponseWriter, request *http.Request) {
-	render.Template(writer, "main.page.tmpl")
+	render.Template(writer, "main.page.tmpl", &models.TemplateData{})
 }
 func (repo *Repository) AboutPage(writer http.ResponseWriter, request *http.Request) {
-	render.Template(writer, "about.page.tmpl")
+	stringMap := make(map[string]string)
+	stringMap["defaultData"] = "default value"
+	render.Template(writer, "about.page.tmpl", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }

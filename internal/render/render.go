@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
+	"github.com/anonymfrominternet/Hotel/internal/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -19,7 +20,11 @@ func NewTemplates(appConfigAsParam *config.AppConfig) {
 
 var functions = template.FuncMap{}
 
-func Template(w http.ResponseWriter, tmplName string) {
+func addDefaultData(templateData *models.TemplateData) *models.TemplateData {
+	return templateData
+}
+
+func Template(w http.ResponseWriter, tmplName string, templateData *models.TemplateData) {
 	// Get the template cache from the app config
 	var templateCache map[string]*template.Template
 	var err error
@@ -37,7 +42,9 @@ func Template(w http.ResponseWriter, tmplName string) {
 
 	buf := new(bytes.Buffer)
 
-	err = tmpl.Execute(buf, nil)
+	addDefaultData(templateData)
+
+	err = tmpl.Execute(buf, templateData)
 	if err != nil {
 		log.Fatal("error in render package in Template() in err = tmpl.Execute(buf, nil)")
 	}
