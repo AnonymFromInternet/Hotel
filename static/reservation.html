@@ -60,20 +60,43 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <img class="img-fluid img-thumbnail rounded mx-auto d-block generals-image" src="images/generals-quarters.png" alt="generals quarters room">
+            <h1 class="text-center mt-3">Reservation page</h1>
         </div>
+
+        <form action="reservation.html" method="POST">
+
+            <div class="row">
+                <div class="col">
+
+                    <div class="mb-3">
+                        <label for="first_name" class="form-label">First Name</label>
+                        <input required type="text" class="form-control" name="first_name" id="first_name" autocomplete="off">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="last_name" class="form-label">Last Name</label>
+                        <input required type="text" class="form-control" name="last_name" id="last_name" autocomplete="off">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input required type="email" class="form-control" name="email" id="email" autocomplete="off">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input required type="text" class="form-control" name="phone" id="phone" autocomplete="off">
+                    </div>
+
+                </div>
+
+
+            </div>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+
     </div>
-    <div class="row">
-        <div class="col">
-            <h1 class="text-center mt-3">Generals quarters page</h1>
-            <p><span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A adipisci blanditiis consequatur cum dignissimos enim esse et fuga illo in inventore minus, mollitia nulla perferendis quasi reiciendis repellendus suscipit veritatis!</span><span>At commodi dolorum fuga fugit, ipsa iure laudantium sit sunt veniam! Autem dolor in iste placeat vitae? Cupiditate error exercitationem impedit voluptatibus. A, architecto eos et molestias nemo nisi quas?</span><span>Aut cumque dolorum facere impedit laborum magnam molestiae molestias omnis optio repellat. Aperiam consectetur dolorum, eum iusto quis ut vitae! Aperiam deserunt dicta dignissimos et exercitationem, fuga minima non qui.</span><span>Adipisci at autem cupiditate debitis dicta, dolore fugiat illum iure laboriosam maxime mollitia non obcaecati officiis porro quam qui quibusdam sed voluptatum. Ad asperiores cupiditate est hic possimus, reprehenderit saepe.</span><span>Aut eaque ex laborum maxime mollitia nihil porro saepe. Aliquid aspernatur corporis dicta distinctio enim facere facilis, fugiat laborum maxime placeat porro provident, quos, reiciendis sequi totam velit voluptates! Autem!</span><span>Aspernatur dignissimos, distinctio esse, expedita laborum magni minima nihil nisi quidem, quos repellendus sed ullam veniam? Accusamus, accusantium ad, aperiam architecto commodi illum maiores minus neque quas quasi quos tempore!</span></p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col text-center">
-            <a href="/reservation-gq" class="btn btn-success">Check availability</a>
-        </div>
-    </div>
+
 
     <div class="row footer">
 
