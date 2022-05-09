@@ -1,0 +1,51 @@
+{{template "base" .}}
+
+{{define "content"}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center mt-3">Search for availability</h1>
+            </div>
+
+            <form action="/search-availability" method="GET">
+
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Start date</label>
+                            <input required type="date" class="form-control" name="start_date" id="start_date">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input required type="date" class="form-control" name="end_date" id="end_date">
+                        </div>
+                    </div>
+
+                </div>
+                <button id="check-btn" type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Check</button>
+            </form>
+
+        </div>
+    </div>
+{{end}}
+
+    {{define "css"}}
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
+    {{end}}
+
+{{define "js"}}
+    <script src="https://unpkg.com/notie"></script>
+    <script>
+        function notify(type, msg) {
+            notie.alert({
+                type: type,
+                text: msg,
+            })
+        }
+        document.getElementById('check-btn').addEventListener('click', () => {
+            notify('error', 'text')
+        })
+    </script>
+{{end}}

@@ -17,10 +17,18 @@ func routes(appConfig *config.AppConfig) http.Handler {
 	mux.Use(SessionLoadMiddleware)
 	// Adding middlewares
 
-	// Requests Handlers
+	// GET Requests Handlers
 	mux.Get("/", handlers.Repo.MainPage)
 	mux.Get("/about", handlers.Repo.AboutPage)
-	// Requests Handlers
+	mux.Get("/generals", handlers.Repo.Generals)
+	mux.Get("/president", handlers.Repo.President)
+	mux.Get("/search-availability", handlers.Repo.Availability)
+	mux.Get("/contact", handlers.Repo.Contact)
+	mux.Get("/reservation", handlers.Repo.Reservation)
+	// GET Requests Handlers
+
+	// POST Requests Handlers
+	// POST Requests Handlers
 
 	// Adding file server
 	fileServer := http.FileServer(http.Dir("../../static/"))

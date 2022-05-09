@@ -1,0 +1,53 @@
+{{template "base" .}}
+
+{{define "content"}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <img class="img-fluid img-thumbnail rounded mx-auto d-block generals-image" src="../static/images/generals-quarters.png" alt="generals quarters room">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center mt-3">Generals quarters page</h1>
+                <p><span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A adipisci blanditiis consequatur cum dignissimos enim esse et fuga illo in inventore minus, mollitia nulla perferendis quasi reiciendis repellendus suscipit veritatis!</span><span>At commodi dolorum fuga fugit, ipsa iure laudantium sit sunt veniam! Autem dolor in iste placeat vitae? Cupiditate error exercitationem impedit voluptatibus. A, architecto eos et molestias nemo nisi quas?</span><span>Aut cumque dolorum facere impedit laborum magnam molestiae molestias omnis optio repellat. Aperiam consectetur dolorum, eum iusto quis ut vitae! Aperiam deserunt dicta dignissimos et exercitationem, fuga minima non qui.</span><span>Adipisci at autem cupiditate debitis dicta, dolore fugiat illum iure laboriosam maxime mollitia non obcaecati officiis porro quam qui quibusdam sed voluptatum. Ad asperiores cupiditate est hic possimus, reprehenderit saepe.</span><span>Aut eaque ex laborum maxime mollitia nihil porro saepe. Aliquid aspernatur corporis dicta distinctio enim facere facilis, fugiat laborum maxime placeat porro provident, quos, reiciendis sequi totam velit voluptates! Autem!</span><span>Aspernatur dignissimos, distinctio esse, expedita laborum magni minima nihil nisi quidem, quos repellendus sed ullam veniam? Accusamus, accusantium ad, aperiam architecto commodi illum maiores minus neque quas quasi quos tempore!</span></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <a href="#!" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Check availability</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Choose your dates</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="start_date" class="form-label">Start date</label>
+                                <input required type="date" class="form-control" name="start_date" id="start_date">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="end_date" class="form-label">End Date</label>
+                                <input required type="date" class="form-control" name="end_date" id="end_date">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
