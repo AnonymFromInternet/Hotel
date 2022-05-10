@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/models"
+	"github.com/justinas/nosurf"
 	"html/template"
 	"log"
 	"net/http"
@@ -20,11 +21,12 @@ func NewTemplates(appConfigAsParam *config.AppConfig) {
 
 var functions = template.FuncMap{}
 
-func addDefaultData(templateData *models.TemplateData) *models.TemplateData {
+func addDefaultData(templateData *models.TemplateData, request *http.Request) *models.TemplateData {
+	templateData.CSRFToken = nosurf.Token(request)
 	return templateData
 }
 
-func Template(w http.ResponseWriter, tmplName string, templateData *models.TemplateData) {
+func Template(w http.ResponseWriter, request *http.Request, tmplName string, templateData *models.TemplateData) {
 	// Get the template cache from the app config
 	var templateCache map[string]*template.Template
 	var err error
@@ -42,7 +44,7 @@ func Template(w http.ResponseWriter, tmplName string, templateData *models.Templ
 
 	buf := new(bytes.Buffer)
 
-	addDefaultData(templateData)
+	addDefaultData(templateData, request)
 
 	err = tmpl.Execute(buf, templateData)
 	if err != nil {

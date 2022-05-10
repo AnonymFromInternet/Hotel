@@ -7,8 +7,8 @@
                 <h1 class="text-center mt-3">Search for availability</h1>
             </div>
 
-            <form action="/search-availability" method="GET">
-
+            <form action="/search-availability" method="post">
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                 <div class="row">
                     <div class="col">
                         <div class="mb-3">

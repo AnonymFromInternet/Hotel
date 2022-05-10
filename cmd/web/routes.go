@@ -28,6 +28,7 @@ func routes(appConfig *config.AppConfig) http.Handler {
 	// GET Requests Handlers
 
 	// POST Requests Handlers
+	mux.Post("/search-availability", handlers.Repo.PostAvailability)
 	// POST Requests Handlers
 
 	// Adding file server
