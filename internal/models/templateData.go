@@ -1,6 +1,8 @@
 package models
 
-// TemplateData is a datatype that gives some sort of data into the render function
+import "github.com/anonymfrominternet/Hotel/internal/forms"
+
+// TemplateData is a datatype that gives some sort of data into the render function and those data are available in every page
 type TemplateData struct {
 	StringMap map[string]string
 	IntMap    map[string]int
@@ -10,4 +12,5 @@ type TemplateData struct {
 	Message   string
 	Warning   string
 	Error     string
+	Form      *forms.Form
 }

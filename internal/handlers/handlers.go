@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
+	"github.com/anonymfrominternet/Hotel/internal/forms"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
 	"net/http"
@@ -66,7 +67,9 @@ func (repo *Repository) Contact(writer http.ResponseWriter, request *http.Reques
 
 // Reservation is a GET handler for the reservation page
 func (repo *Repository) Reservation(writer http.ResponseWriter, request *http.Request) {
-	render.Template(writer, request, "reservation.page.tmpl", &models.TemplateData{})
+	render.Template(writer, request, "reservation.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	})
 }
 
 type jsonResponse struct {
@@ -103,6 +106,11 @@ func (repo *Repository) PostAvailability(writer http.ResponseWriter, request *ht
 	// Getting data from form by the POST method
 
 	_, _ = writer.Write([]byte(fmt.Sprintf("Start is %s, end is %s", start, end)))
+
+}
+
+// PostReservation is a POST handler for the reservation page
+func (repo *Repository) PostReservation(writer http.ResponseWriter, request *http.Request) {
 
 }
 
