@@ -44,10 +44,29 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
+                        <button onclick="sendData()" type="button" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{{end}}
+
+{{define "js"}}
+    <script>
+
+        const sendData = () => {
+            let startDate = document.getElementById("start_date").value
+            let endDate = document.getElementById("end_date").value
+
+            if (startDate === undefined || startDate === null || startDate === "" || endDate === undefined || endDate === null || endDate === "") {
+                console.log("Dates are empty")
+                return
+            }
+            fetch("/search-availability-json").then(response => response.json()).then(data => {
+                console.log(data)
+            })
+        }
+
+    </script>
 {{end}}

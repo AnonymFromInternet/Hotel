@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/models"
@@ -66,6 +67,28 @@ func (repo *Repository) Contact(writer http.ResponseWriter, request *http.Reques
 // Reservation is a GET handler for the reservation page
 func (repo *Repository) Reservation(writer http.ResponseWriter, request *http.Request) {
 	render.Template(writer, request, "reservation.page.tmpl", &models.TemplateData{})
+}
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+// AvailabilityJSON is a GET handler. This handler sends back JSON data about availability
+func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *http.Request) {
+	response := jsonResponse{
+		OK:      true,
+		Message: "Available",
+	}
+
+	out, err := json.MarshalIndent(response, "", "   ")
+	if err != nil {
+		fmt.Println("cannot convert response to JSON")
+		return
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	_, _ = writer.Write(out)
 }
 
 // GET HANDLERS
