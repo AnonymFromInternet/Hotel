@@ -48,7 +48,7 @@ func Template(w http.ResponseWriter, request *http.Request, tmplName string, tem
 
 	err = tmpl.Execute(buf, templateData)
 	if err != nil {
-		log.Fatal("error in render package in Template() in err = tmpl.Execute(buf, nil)")
+		log.Fatal("error in render package in Template() in err = tmpl.Execute(buf, templateData)", err)
 	}
 
 	_, err = buf.WriteTo(w)

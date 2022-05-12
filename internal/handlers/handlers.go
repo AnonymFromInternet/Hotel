@@ -111,6 +111,35 @@ func (repo *Repository) PostAvailability(writer http.ResponseWriter, request *ht
 
 // PostReservation is a POST handler for the reservation page
 func (repo *Repository) PostReservation(writer http.ResponseWriter, request *http.Request) {
+	err := request.ParseForm()
+	if err != nil {
+		fmt.Println("cannot parse data from request", err)
+		return
+	}
+
+	// Getting data which was added by user in inputs
+	reservationPageInputs := models.ReservationPageInputtedData{
+		FirstName: request.Form.Get("first_name"),
+		LastName:  request.Form.Get("last_name"),
+		Email:     request.Form.Get("email"),
+		Phone:     request.Form.Get("phone"),
+	}
+
+	// Getting data which was added by user in inputs
+
+	form := forms.New(request.PostForm)
+	form.HasFieldValue("first_name", request)
+
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["reservationPageInputs"] = reservationPageInputs
+
+		render.Template(writer, request, "reservation.page.tmpl", &models.TemplateData{
+			Form: form,
+			Data: data,
+		})
+		return
+	}
 
 }
 

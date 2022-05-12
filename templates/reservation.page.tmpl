@@ -8,27 +8,32 @@
             </div>
 
             <form action="/reservation" method="post">
-                <input type="text" name="csrf_token" value="{{.CSRFToken}}">
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                 <div class="row">
                     <div class="col">
                         <div class="mb-3">
                             <label for="first_name" class="form-label">First Name</label>
-                            <input required type="text" class="form-control" name="first_name" id="first_name" autocomplete="off">
+
+                            {{with .Form.Errors.Get "first_name"}}
+                                <label class="text-danger">{{.}}</label>
+                            {{end}}
+
+                            <input type="text" class="form-control {{with .Form.Errors.Get "first_name"}} is-invalid {{end}}" name="first_name" id="first_name" autocomplete="off">
                         </div>
 
                         <div class="mb-3">
                             <label for="last_name" class="form-label">Last Name</label>
-                            <input required type="text" class="form-control" name="last_name" id="last_name" autocomplete="off">
+                            <input type="text" class="form-control {{with .Form.Errors.Get "last_name"}} is-invalid {{end}}" name="last_name" id="last_name" autocomplete="off">
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input required type="email" class="form-control" name="email" id="email" autocomplete="off">
+                            <input type="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}" name="email" id="email" autocomplete="off">
                         </div>
 
                         <div class="mb-3">
                             <label for="phone" class="form-label">Phone</label>
-                            <input required type="text" class="form-control" name="phone" id="phone" autocomplete="off">
+                            <input type="text" class="form-control {{with .Form.Errors.Get "phone"}} is-invalid {{end}}" name="phone" id="phone" autocomplete="off">
                         </div>
                     </div>
                 </div>
