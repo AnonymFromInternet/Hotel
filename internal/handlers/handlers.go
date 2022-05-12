@@ -67,8 +67,13 @@ func (repo *Repository) Contact(writer http.ResponseWriter, request *http.Reques
 
 // Reservation is a GET handler for the reservation page
 func (repo *Repository) Reservation(writer http.ResponseWriter, request *http.Request) {
+	var emptyReservation models.ReservationPageInputtedData
+	data := make(map[string]interface{})
+	data["reservationPageInputs"] = emptyReservation
+
 	render.Template(writer, request, "reservation.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
+		Data: data,
 	})
 }
 
@@ -124,11 +129,11 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 		Email:     request.Form.Get("email"),
 		Phone:     request.Form.Get("phone"),
 	}
-
 	// Getting data which was added by user in inputs
 
 	form := forms.New(request.PostForm)
-	form.HasFieldValue("first_name", request)
+	form.Required("first_name", "last_name", "email", "phone")
+	form.MinLength("first_name", 3, request)
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
