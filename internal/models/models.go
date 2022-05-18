@@ -5,6 +5,6 @@ package models
 type ReservationPageInputtedData struct {
 	FirstName string
 	LastName  string
-	Email     string
+	Email     string `valid:"email"`
 	Phone     string
 }

@@ -2,6 +2,7 @@ package forms
 
 import (
 	"fmt"
+	"github.com/asaskevich/govalidator"
 	"net/http"
 	"net/url"
 	"strings"
@@ -52,4 +53,12 @@ func (form *Form) HasFieldValue(field string, request *http.Request) bool {
 		return false
 	}
 	return true
+}
+
+// IsEmail checks if given email address is an actual email
+func (form *Form) IsEmail(field string) {
+	emailInput := form.Get(field)
+	if !govalidator.IsEmail(emailInput) {
+		form.Errors.Add(field, "This is not an email")
+	}
 }
