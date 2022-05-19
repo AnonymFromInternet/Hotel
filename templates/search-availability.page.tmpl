@@ -26,26 +26,18 @@
                 </div>
                 <button id="check-btn" type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Check</button>
             </form>
-
         </div>
     </div>
 {{end}}
 
-    {{define "css"}}
-        <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
-    {{end}}
+{{define "css"}}
+
+{{end}}
 
 {{define "js"}}
-    <script src="https://unpkg.com/notie"></script>
     <script>
-        function notify(type, msg) {
-            notie.alert({
-                type: type,
-                text: msg,
-            })
-        }
         document.getElementById('check-btn').addEventListener('click', () => {
-            notify('error', 'text')
+            notify('error', 'Please take Arrival and Departure dates')
         })
     </script>
 {{end}}

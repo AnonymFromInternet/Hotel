@@ -100,13 +100,17 @@ func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *ht
 	_, _ = writer.Write(out)
 }
 
+// ReservationSummary is a GET handler for the reservation-summary page
 func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *http.Request) {
 	reservationPageInputs, ok := repo.AppConfig.Session.Get(request.Context(),
 		"reservationPageInputs").(models.ReservationPageInputtedData)
 	if !ok {
 		log.Print("Cannot assert data type")
+		repo.AppConfig.Session.Put(request.Context(), "Error", "Cannot get data from reservation")
+		http.Redirect(writer, request, "/", http.StatusTemporaryRedirect)
 		return
 	}
+	repo.AppConfig.Session.Remove(request.Context(), "reservationPageInputs")
 	data := make(map[string]interface{})
 	data["reservationPageInputs"] = reservationPageInputs
 

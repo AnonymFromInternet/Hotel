@@ -22,6 +22,9 @@ func NewTemplates(appConfigAsParam *config.AppConfig) {
 var functions = template.FuncMap{}
 
 func addDefaultData(templateData *models.TemplateData, request *http.Request) *models.TemplateData {
+	templateData.Message = appConfig.Session.PopString(request.Context(), "Message")
+	templateData.Error = appConfig.Session.PopString(request.Context(), "Error")
+	templateData.Warning = appConfig.Session.PopString(request.Context(), "Warning")
 	templateData.CSRFToken = nosurf.Token(request)
 	return templateData
 }
