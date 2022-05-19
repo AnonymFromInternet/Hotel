@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/gob"
 	"github.com/alexedwards/scs/v2"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/handlers"
+	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
 	"log"
 	"net/http"
@@ -16,6 +18,19 @@ var appConfig config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+
+	// Adding custom data types to scs.SessionManager
+	gob.Register(models.ReservationPageInputtedData{})
+	// Adding custom data types to scs.SessionManager
+
+	// State Management configuration
+	session = scs.New()
+	session.Lifetime = 3 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = appConfig.IsInProduction
+	// State Management configuration
+
 	// AppConfig and Repository configuration
 	appConfig.IsInProduction = false
 	appConfig.Session = session
@@ -33,14 +48,6 @@ func main() {
 
 	render.NewTemplates(&appConfig)
 	// AppConfig and Repository  configuration
-
-	// State Management configuration
-	session = scs.New()
-	session.Lifetime = 3 * time.Hour
-	session.Cookie.Persist = true
-	session.Cookie.SameSite = http.SameSiteLaxMode
-	session.Cookie.Secure = appConfig.IsInProduction
-	// State Management configuration
 
 	// Server configuration
 	server := http.Server{

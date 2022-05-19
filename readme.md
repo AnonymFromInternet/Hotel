@@ -6,3 +6,4 @@ This is the repository for Hotel site
 - Uses [SCS](https://github.com/alexedwards/scs/) session management
 - Uses [nosurf](https://github.com/justinas/nosurf)
 - Uses [Bootstrap](https://getbootstrap.com/)
+- Uses [Govalidator](https://github.com/asaskevich/govalidator)

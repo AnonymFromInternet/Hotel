@@ -7,6 +7,7 @@ import (
 	"github.com/anonymfrominternet/Hotel/internal/forms"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
+	"log"
 	"net/http"
 )
 
@@ -99,6 +100,21 @@ func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *ht
 	_, _ = writer.Write(out)
 }
 
+func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *http.Request) {
+	reservationPageInputs, ok := repo.AppConfig.Session.Get(request.Context(),
+		"reservationPageInputs").(models.ReservationPageInputtedData)
+	if !ok {
+		log.Print("Cannot assert data type")
+		return
+	}
+	data := make(map[string]interface{})
+	data["reservationPageInputs"] = reservationPageInputs
+
+	render.Template(writer, request, "reservation-summary.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
+}
+
 // GET HANDLERS
 
 // POST HANDLERS
@@ -146,6 +162,9 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 		})
 		return
 	}
+
+	repo.AppConfig.Session.Put(request.Context(), "reservationPageInputs", reservationPageInputs)
+	http.Redirect(writer, request, "/reservation-summary", http.StatusSeeOther)
 
 }
 
