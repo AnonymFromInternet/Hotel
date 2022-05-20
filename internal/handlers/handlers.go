@@ -106,6 +106,7 @@ func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *
 		"reservationPageInputs").(models.ReservationPageInputtedData)
 	if !ok {
 		log.Print("Cannot assert data type")
+		log.Println("actual state of page inputs is", reservationPageInputs)
 		repo.AppConfig.Session.Put(request.Context(), "Error", "Cannot get data from reservation")
 		http.Redirect(writer, request, "/", http.StatusTemporaryRedirect)
 		return

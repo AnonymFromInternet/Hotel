@@ -13,6 +13,7 @@ import (
 )
 
 var appConfig *config.AppConfig
+var pathToTemplates = "../../templates/"
 
 // NewTemplates sets the value of the var appConfig
 func NewTemplates(appConfigAsParam *config.AppConfig) {
@@ -64,7 +65,7 @@ func Template(w http.ResponseWriter, request *http.Request, tmplName string, tem
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
-	pages, err := filepath.Glob("../../templates/*.page.tmpl")
+	pages, err := filepath.Glob(fmt.Sprintf("%s*.page.tmpl", pathToTemplates))
 	if err != nil {
 		fmt.Println("error in render package in TemplateTest() in filepath.Glob()")
 		return cache, err
@@ -80,14 +81,14 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 			return cache, err
 		}
 
-		layouts, err := filepath.Glob("../../templates/*.layout.tmpl")
+		layouts, err := filepath.Glob(fmt.Sprintf("%s*.layout.tmpl", pathToTemplates))
 		if err != nil {
 			fmt.Println("error in render package in TemplateTest() in layouts, err := filepath.Glob()")
 			return cache, err
 		}
 
 		if len(layouts) > 0 {
-			tmpl, err = tmpl.ParseGlob("../../templates/*.layout.tmpl")
+			tmpl, err = tmpl.ParseGlob(fmt.Sprintf("%s*.layout.tmpl", pathToTemplates))
 			if err != nil {
 				fmt.Println("error in render package in TemplateTest() in if len(layouts) > 0 ")
 				return cache, err
