@@ -10,7 +10,6 @@ import (
 
 func routes(appConfig *config.AppConfig) http.Handler {
 	mux := chi.NewRouter()
-
 	// Adding middlewares
 	mux.Use(middleware.Recoverer)
 	mux.Use(NoSurfMiddleware)

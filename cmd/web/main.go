@@ -18,7 +18,25 @@ var appConfig config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	err := run()
+	if err != nil {
+		log.Fatal("error by running the run() function", err)
+	}
 
+	// Server configuration
+	server := http.Server{
+		Addr:    portNumber,
+		Handler: routes(&appConfig),
+	}
+
+	err = server.ListenAndServe()
+	if err != nil {
+		log.Fatal("cannot start listen and serve")
+	}
+	// Server configuration
+}
+
+func run() error {
 	// Adding custom data types to scs.SessionManager
 	gob.Register(models.ReservationPageInputtedData{})
 	// Adding custom data types to scs.SessionManager
@@ -38,6 +56,7 @@ func main() {
 	templateCache, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache in main")
+		return err
 	}
 
 	appConfig.TemplateCache = templateCache
@@ -48,16 +67,5 @@ func main() {
 
 	render.NewTemplates(&appConfig)
 	// AppConfig and Repository  configuration
-
-	// Server configuration
-	server := http.Server{
-		Addr:    portNumber,
-		Handler: routes(&appConfig),
-	}
-
-	err = server.ListenAndServe()
-	if err != nil {
-		log.Fatal("cannot start listen and serve")
-	}
-	// Server configuration
+	return nil
 }
