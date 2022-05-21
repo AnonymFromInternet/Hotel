@@ -22,7 +22,7 @@ func NewTemplates(appConfigAsParam *config.AppConfig) {
 
 var functions = template.FuncMap{}
 
-func addDefaultData(templateData *models.TemplateData, request *http.Request) *models.TemplateData {
+func AddDefaultData(templateData *models.TemplateData, request *http.Request) *models.TemplateData {
 	templateData.Message = appConfig.Session.PopString(request.Context(), "Message")
 	templateData.Error = appConfig.Session.PopString(request.Context(), "Error")
 	templateData.Warning = appConfig.Session.PopString(request.Context(), "Warning")
@@ -30,7 +30,7 @@ func addDefaultData(templateData *models.TemplateData, request *http.Request) *m
 	return templateData
 }
 
-func Template(w http.ResponseWriter, request *http.Request, tmplName string, templateData *models.TemplateData) {
+func Template(w http.ResponseWriter, request *http.Request, tmplName string, templateData *models.TemplateData) error {
 	// Get the template cache from the app config
 	var templateCache map[string]*template.Template
 	var err error
@@ -48,17 +48,20 @@ func Template(w http.ResponseWriter, request *http.Request, tmplName string, tem
 
 	buf := new(bytes.Buffer)
 
-	addDefaultData(templateData, request)
+	AddDefaultData(templateData, request)
 
 	err = tmpl.Execute(buf, templateData)
 	if err != nil {
 		log.Fatal("error in render package in Template() in err = tmpl.Execute(buf, templateData)", err)
+		return err
 	}
 
 	_, err = buf.WriteTo(w)
 	if err != nil {
 		log.Fatal("error in render package in Template() in _, err = buf.WriteTo(w)")
+		return err
 	}
+	return nil
 }
 
 // CreateTemplateCache creates map with templates

@@ -7,7 +7,6 @@ import (
 	"github.com/anonymfrominternet/Hotel/internal/forms"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
-	"log"
 	"net/http"
 )
 
@@ -105,8 +104,6 @@ func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *
 	reservationPageInputs, ok := repo.AppConfig.Session.Get(request.Context(),
 		"reservationPageInputs").(models.ReservationPageInputtedData)
 	if !ok {
-		log.Print("Cannot assert data type")
-		log.Println("actual state of page inputs is", reservationPageInputs)
 		repo.AppConfig.Session.Put(request.Context(), "Error", "Cannot get data from reservation")
 		http.Redirect(writer, request, "/", http.StatusTemporaryRedirect)
 		return
