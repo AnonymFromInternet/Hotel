@@ -7,7 +7,6 @@ import (
 )
 
 func TestAddDefaultData(t *testing.T) {
-
 	var templateData models.TemplateData
 	// Creating new request with a context
 	request, err := getSession()
