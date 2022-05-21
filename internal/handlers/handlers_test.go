@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -25,6 +26,23 @@ var testsConfigs = []struct {
 	{name: "search-availability", url: "/search-availability", method: "GET", params: []PostData{}, expectedStatusCode: http.StatusOK},
 	{name: "contact", url: "/contact", method: "GET", params: []PostData{}, expectedStatusCode: http.StatusOK},
 	{name: "reservation", url: "/reservation", method: "GET", params: []PostData{}, expectedStatusCode: http.StatusOK},
+
+	{name: "search-availability", url: "/search-availability", method: "POST", params: []PostData{
+		{key: "start_date", value: "2022-03-04"},
+		{key: "end_date", value: "2022-03-05"},
+	}, expectedStatusCode: http.StatusOK},
+
+	{name: "search-availability-json", url: "/search-availability-json", method: "POST", params: []PostData{
+		{key: "start_date", value: "2022-03-04"},
+		{key: "end_date", value: "2022-03-05"},
+	}, expectedStatusCode: http.StatusOK},
+
+	{name: "reservation", url: "/reservation", method: "POST", params: []PostData{
+		{key: "first_name", value: "Andrew"},
+		{key: "last_name", value: "Bradley"},
+		{key: "email", value: "y@y.com"},
+		{key: "phone", value: "6"},
+	}, expectedStatusCode: http.StatusOK},
 }
 
 func TestHandlers(t *testing.T) {
@@ -46,6 +64,19 @@ func TestHandlers(t *testing.T) {
 			}
 		} else {
 			// Requests with POST Method
+			values := url.Values{}
+			for _, testConfigParam := range testConfig.params {
+				values.Add(testConfigParam.key, testConfigParam.value)
+			}
+			response, err := testServer.Client().PostForm(testServer.URL+testConfig.url, values)
+			if err != nil {
+				t.Log(err)
+				t.Fatal(err)
+			}
+			if testConfig.expectedStatusCode != response.StatusCode {
+				t.Errorf("in %s expected status code is %d, but actual is %d", testConfig.name, testConfig.expectedStatusCode, response.StatusCode)
+			}
+
 		}
 	}
 }

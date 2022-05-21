@@ -56,7 +56,7 @@ func getRoutes() http.Handler {
 	mux := chi.NewRouter()
 	// Adding middlewares
 	mux.Use(middleware.Recoverer)
-	mux.Use(NoSurfMiddleware)
+	//mux.Use(NoSurfMiddleware)
 	mux.Use(SessionLoadMiddleware)
 	// Adding middlewares
 
