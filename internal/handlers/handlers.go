@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/forms"
+	"github.com/anonymfrominternet/Hotel/internal/helpers"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
 	"net/http"
@@ -91,7 +92,7 @@ func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *ht
 
 	out, err := json.MarshalIndent(response, "", "   ")
 	if err != nil {
-		fmt.Println("cannot convert response to JSON")
+		helpers.ServerError(writer, err)
 		return
 	}
 
@@ -104,6 +105,7 @@ func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *
 	reservationPageInputs, ok := repo.AppConfig.Session.Get(request.Context(),
 		"reservationPageInputs").(models.ReservationPageInputtedData)
 	if !ok {
+		repo.AppConfig.ErrorLog.Println("Cannot get data from reservation")
 		repo.AppConfig.Session.Put(request.Context(), "Error", "Cannot get data from reservation")
 		http.Redirect(writer, request, "/", http.StatusTemporaryRedirect)
 		return
@@ -136,7 +138,7 @@ func (repo *Repository) PostAvailability(writer http.ResponseWriter, request *ht
 func (repo *Repository) PostReservation(writer http.ResponseWriter, request *http.Request) {
 	err := request.ParseForm()
 	if err != nil {
-		fmt.Println("cannot parse data from request", err)
+		helpers.ServerError(writer, err)
 		return
 	}
 

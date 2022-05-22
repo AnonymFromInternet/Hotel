@@ -5,6 +5,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/models"
+	"log"
 	"net/http"
 	"os"
 	"testing"
@@ -15,6 +16,13 @@ var session *scs.SessionManager
 var testAppConfig config.AppConfig
 
 func TestMain(m *testing.M) {
+	// Creating Loggers
+	infoLogger := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	testAppConfig.InfoLog = infoLogger
+
+	errorLogger := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	testAppConfig.ErrorLog = errorLogger
+	// Creating Loggers
 	// Adding custom data types to scs.SessionManager
 	gob.Register(models.ReservationPageInputtedData{})
 	// Adding custom data types to scs.SessionManager

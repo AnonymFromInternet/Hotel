@@ -13,6 +13,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -23,6 +24,14 @@ var pathToTemplates = "../../templates/"
 var functions = template.FuncMap{}
 
 func getRoutes() http.Handler {
+	// Creating Loggers
+	infoLogger := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	appConfig.InfoLog = infoLogger
+
+	errorLogger := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	appConfig.ErrorLog = errorLogger
+	// Creating Loggers
+
 	// Adding custom data types to scs.SessionManager
 	gob.Register(models.ReservationPageInputtedData{})
 	// Adding custom data types to scs.SessionManager

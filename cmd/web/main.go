@@ -5,10 +5,12 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/handlers"
+	"github.com/anonymfrominternet/Hotel/internal/helpers"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -37,6 +39,14 @@ func main() {
 }
 
 func run() error {
+	// Creating Loggers
+	infoLogger := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	appConfig.InfoLog = infoLogger
+
+	errorLogger := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	appConfig.ErrorLog = errorLogger
+	// Creating Loggers
+
 	// Adding custom data types to scs.SessionManager
 	gob.Register(models.ReservationPageInputtedData{})
 	// Adding custom data types to scs.SessionManager
@@ -61,6 +71,8 @@ func run() error {
 
 	appConfig.TemplateCache = templateCache
 	appConfig.UseCache = false
+
+	helpers.GetAppConfigToTheHelpersPackage(&appConfig)
 
 	repo := handlers.NewRepo(&appConfig)
 	handlers.NewHandlers(repo)
