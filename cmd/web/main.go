@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"github.com/alexedwards/scs/v2"
 	"github.com/anonymfrominternet/Hotel/internal/config"
+	"github.com/anonymfrominternet/Hotel/internal/driver"
 	"github.com/anonymfrominternet/Hotel/internal/handlers"
 	"github.com/anonymfrominternet/Hotel/internal/helpers"
 	"github.com/anonymfrominternet/Hotel/internal/models"
@@ -20,10 +21,11 @@ var appConfig config.AppConfig
 var session *scs.SessionManager
 
 func main() {
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Fatal("error by running the run() function", err)
 	}
+	defer db.SQL.Close()
 
 	// Server configuration
 	server := http.Server{
@@ -38,7 +40,7 @@ func main() {
 	// Server configuration
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 	// Creating Loggers
 	infoLogger := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	appConfig.InfoLog = infoLogger
@@ -63,10 +65,18 @@ func run() error {
 	appConfig.IsInProduction = false
 	appConfig.Session = session
 
+	// Connecting to database
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=hotel user=arturkeil password=")
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+	// Connecting to database
+
 	templateCache, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache in main")
-		return err
+		return nil, err
 	}
 
 	appConfig.TemplateCache = templateCache
@@ -74,10 +84,10 @@ func run() error {
 
 	helpers.GetAppConfigToTheHelpersPackage(&appConfig)
 
-	repo := handlers.NewRepo(&appConfig)
+	repo := handlers.NewRepo(&appConfig, db)
 	handlers.NewHandlers(repo)
 
 	render.NewTemplates(&appConfig)
 	// AppConfig and Repository  configuration
-	return nil
+	return db, nil
 }

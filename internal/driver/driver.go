@@ -20,13 +20,16 @@ const maxIdleDBConn = 15
 const maxDBLifeTime = 15 * time.Minute
 
 func ConnectSQL(dsn string) (*DB, error) {
-	db, err := NewDB(dsn)
+	db, err := newDB(dsn)
 	if err != nil {
 		panic(err)
 	}
+
+	// Configuring DB
 	db.SetMaxOpenConns(maxOpenDbBConn)
 	db.SetMaxIdleConns(maxIdleDBConn)
 	db.SetConnMaxLifetime(maxDBLifeTime)
+	// Configuring DB
 
 	dbConn.SQL = db
 
@@ -38,8 +41,8 @@ func ConnectSQL(dsn string) (*DB, error) {
 	return dbConn, nil
 }
 
-// NewDB creates new database for the app
-func NewDB(dsn string) (*sql.DB, error) {
+// newDB creates new database for the app
+func newDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, err

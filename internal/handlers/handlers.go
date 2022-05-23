@@ -4,24 +4,29 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
+	"github.com/anonymfrominternet/Hotel/internal/driver"
 	"github.com/anonymfrominternet/Hotel/internal/forms"
 	"github.com/anonymfrominternet/Hotel/internal/helpers"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/render"
+	"github.com/anonymfrominternet/Hotel/internal/repository"
+	"github.com/anonymfrominternet/Hotel/internal/repository/dbRepo"
 	"net/http"
 )
 
 type Repository struct {
 	AppConfig *config.AppConfig
+	DB        repository.DatabaseRepository
 }
 
 // Repo is the Repository for the handlers
 var Repo *Repository
 
 // NewRepo gets appConfig from main()
-func NewRepo(appConfig *config.AppConfig) *Repository {
+func NewRepo(appConfig *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		AppConfig: appConfig,
+		DB:        dbRepo.NewPostgresDBRepo(appConfig, db.SQL),
 	}
 }
 
