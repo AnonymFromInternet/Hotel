@@ -1,0 +1,63 @@
+package driver
+
+import (
+	"database/sql"
+	"time"
+
+	_ "github.com/jackc/pgconn"
+	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
+)
+
+type DB struct {
+	SQL *sql.DB
+}
+
+var dbConn = &DB{}
+
+const maxOpenDbBConn = 15
+const maxIdleDBConn = 15
+const maxDBLifeTime = 15 * time.Minute
+
+func ConnectSQL(dsn string) (*DB, error) {
+	db, err := NewDB(dsn)
+	if err != nil {
+		panic(err)
+	}
+	db.SetMaxOpenConns(maxOpenDbBConn)
+	db.SetMaxIdleConns(maxIdleDBConn)
+	db.SetConnMaxLifetime(maxDBLifeTime)
+
+	dbConn.SQL = db
+
+	err = testDB(db)
+	if err != nil {
+		return nil, err
+	}
+
+	return dbConn, nil
+}
+
+// NewDB creates new database for the app
+func NewDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("pgx", dsn)
+	if err != nil {
+		return nil, err
+	}
+	// Testing connection
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+	// Testing connection
+
+	return db, nil
+}
+
+// testDB tries to ping the database
+func testDB(db *sql.DB) error {
+	err := db.Ping()
+	if err != nil {
+		return err
+	}
+	return nil
+}
