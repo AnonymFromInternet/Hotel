@@ -12,6 +12,8 @@ import (
 	"github.com/anonymfrominternet/Hotel/internal/repository"
 	"github.com/anonymfrominternet/Hotel/internal/repository/dbRepo"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 type Repository struct {
@@ -148,11 +150,33 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 	}
 
 	// Getting data which was added by user in inputs
+	startDateAsString := request.Form.Get("start_date")
+	endDateAsString := request.Form.Get("end_date")
+
+	datesLayout := "3-11-2022"
+
+	startDate, err := time.Parse(datesLayout, startDateAsString)
+	if err != nil {
+		helpers.ServerError(writer, err)
+	}
+	endDate, err := time.Parse(datesLayout, endDateAsString)
+	if err != nil {
+		helpers.ServerError(writer, err)
+	}
+
+	roomId, err := strconv.Atoi(request.Form.Get("room_id"))
+	if err != nil {
+		helpers.ServerError(writer, err)
+	}
+
 	reservationPageInputs := models.Reservation{
 		FirstName: request.Form.Get("first_name"),
 		LastName:  request.Form.Get("last_name"),
 		Email:     request.Form.Get("email"),
 		Phone:     request.Form.Get("phone"),
+		StartDate: startDate,
+		EndDate:   endDate,
+		RoomId:    roomId,
 	}
 	// Getting data which was added by user in inputs
 
@@ -171,6 +195,14 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 		})
 		return
 	}
+
+	// Adding info to db
+	err = repo.DB.InsertReservation(reservationPageInputs)
+	if err != nil {
+		helpers.ServerError(writer, err)
+	}
+
+	// Adding info to db
 
 	repo.AppConfig.Session.Put(request.Context(), "reservationPageInputs", reservationPageInputs)
 	http.Redirect(writer, request, "/reservation-summary", http.StatusSeeOther)
