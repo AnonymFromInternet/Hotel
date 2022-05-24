@@ -153,7 +153,7 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 	startDateAsString := request.Form.Get("start_date")
 	endDateAsString := request.Form.Get("end_date")
 
-	datesLayout := "3-11-2022"
+	datesLayout := "2006-01-03"
 
 	startDate, err := time.Parse(datesLayout, startDateAsString)
 	if err != nil {
@@ -201,7 +201,6 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 	if err != nil {
 		helpers.ServerError(writer, err)
 	}
-
 	// Adding info to db
 
 	repo.AppConfig.Session.Put(request.Context(), "reservationPageInputs", reservationPageInputs)

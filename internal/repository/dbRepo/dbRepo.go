@@ -22,7 +22,7 @@ func (postgresDBRepo *postgresDBRepo) InsertReservation(reservation models.Reser
 	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
 	defer cancel()
 
-	statement := `insert into reservation (first_name, last_name, email, phone, start_date, end_date, room_id, created_at, updated_at)
+	statement := `insert into reservations (first_name, last_name, email, phone, start_date, end_date, room_id, created_at, updated_at)
 			values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 	_, err := postgresDBRepo.DB.ExecContext(context, statement,
 		reservation.FirstName,
