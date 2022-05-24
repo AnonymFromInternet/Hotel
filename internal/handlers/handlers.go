@@ -73,7 +73,7 @@ func (repo *Repository) Contact(writer http.ResponseWriter, request *http.Reques
 
 // Reservation is a GET handler for the reservation page
 func (repo *Repository) Reservation(writer http.ResponseWriter, request *http.Request) {
-	var emptyReservation models.ReservationPageInputtedData
+	var emptyReservation models.Reservation
 	data := make(map[string]interface{})
 	data["reservationPageInputs"] = emptyReservation
 
@@ -108,7 +108,7 @@ func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *ht
 // ReservationSummary is a GET handler for the reservation-summary page
 func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *http.Request) {
 	reservationPageInputs, ok := repo.AppConfig.Session.Get(request.Context(),
-		"reservationPageInputs").(models.ReservationPageInputtedData)
+		"reservationPageInputs").(models.Reservation)
 	if !ok {
 		repo.AppConfig.ErrorLog.Println("Cannot get data from reservation")
 		repo.AppConfig.Session.Put(request.Context(), "Error", "Cannot get data from reservation")
@@ -148,7 +148,7 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 	}
 
 	// Getting data which was added by user in inputs
-	reservationPageInputs := models.ReservationPageInputtedData{
+	reservationPageInputs := models.Reservation{
 		FirstName: request.Form.Get("first_name"),
 		LastName:  request.Form.Get("last_name"),
 		Email:     request.Form.Get("email"),

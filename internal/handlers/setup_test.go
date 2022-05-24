@@ -33,7 +33,7 @@ func getRoutes() http.Handler {
 	// Creating Loggers
 
 	// Adding custom data types to scs.SessionManager
-	gob.Register(models.ReservationPageInputtedData{})
+	gob.Register(models.Reservation{})
 	// Adding custom data types to scs.SessionManager
 
 	// State Management configuration
@@ -59,7 +59,7 @@ func getRoutes() http.Handler {
 	repo := NewRepo(&appConfig)
 	NewHandlers(repo)
 
-	render.NewTemplates(&appConfig)
+	render.NewRenderer(&appConfig)
 	// AppConfig and Repository  configuration
 
 	mux := chi.NewRouter()

@@ -15,8 +15,8 @@ import (
 var appConfig *config.AppConfig
 var pathToTemplates = "../../templates/"
 
-// NewTemplates sets the value of the var appConfig
-func NewTemplates(appConfigAsParam *config.AppConfig) {
+// NewRenderer sets the value of the var appConfig
+func NewRenderer(appConfigAsParam *config.AppConfig) {
 	appConfig = appConfigAsParam
 }
 

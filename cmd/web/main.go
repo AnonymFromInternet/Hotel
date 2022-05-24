@@ -50,7 +50,11 @@ func run() (*driver.DB, error) {
 	// Creating Loggers
 
 	// Adding custom data types to scs.SessionManager
-	gob.Register(models.ReservationPageInputtedData{})
+	gob.Register(models.User{})
+	gob.Register(models.Room{})
+	gob.Register(models.Reservation{})
+	gob.Register(models.RoomRestriction{})
+	gob.Register(models.Restriction{})
 	// Adding custom data types to scs.SessionManager
 
 	// State Management configuration
@@ -87,7 +91,7 @@ func run() (*driver.DB, error) {
 	repo := handlers.NewRepo(&appConfig, db)
 	handlers.NewHandlers(repo)
 
-	render.NewTemplates(&appConfig)
+	render.NewRenderer(&appConfig)
 	// AppConfig and Repository  configuration
 	return db, nil
 }

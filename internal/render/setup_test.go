@@ -24,7 +24,7 @@ func TestMain(m *testing.M) {
 	testAppConfig.ErrorLog = errorLogger
 	// Creating Loggers
 	// Adding custom data types to scs.SessionManager
-	gob.Register(models.ReservationPageInputtedData{})
+	gob.Register(models.Reservation{})
 	// Adding custom data types to scs.SessionManager
 
 	// State Management configuration
