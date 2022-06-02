@@ -153,7 +153,7 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 	startDateAsString := request.Form.Get("start_date")
 	endDateAsString := request.Form.Get("end_date")
 
-	datesLayout := "2006-01-03"
+	datesLayout := "2006-01-02"
 
 	startDate, err := time.Parse(datesLayout, startDateAsString)
 	if err != nil {
