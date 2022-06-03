@@ -3,6 +3,7 @@ package dbRepo
 import (
 	context2 "context"
 	"database/sql"
+	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/repository"
@@ -18,7 +19,7 @@ func (postgresDBRepo *postgresDBRepo) AllUsers() bool {
 	return true
 }
 
-// InsertReservation inserts new items into the Reservations table
+// InsertReservation inserts new items into the reservations table
 func (postgresDBRepo *postgresDBRepo) InsertReservation(reservation models.Reservation) (int, error) {
 	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
 	defer cancel()
@@ -45,6 +46,7 @@ func (postgresDBRepo *postgresDBRepo) InsertReservation(reservation models.Reser
 	return newReservationId, nil
 }
 
+// InsertRoomRestriction inserts new items in the room_restriction table
 func (postgresDBRepo *postgresDBRepo) InsertRoomRestriction(restriction models.RoomRestriction) error {
 	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
 	defer cancel()
@@ -67,6 +69,40 @@ func (postgresDBRepo *postgresDBRepo) InsertRoomRestriction(restriction models.R
 	}
 
 	return nil
+}
+
+// IsRoomAvailable checks if a room is available for a user in period of user's dates
+func (postgresDBRepo *postgresDBRepo) IsRoomAvailable(roomId int, startDate, endDate time.Time) (bool, error) {
+	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
+	defer cancel()
+
+	var numRows int
+	query := `
+				select
+					count(id)
+				from room_restrictions
+				where 
+				    room_id = $1
+				    2$ < start_date or $3 > end_date;
+			`
+	row := postgresDBRepo.DB.QueryRowContext(context, query,
+		roomId,
+		endDate,
+		startDate,
+	)
+
+	fmt.Println("number of rows is ", numRows)
+
+	err := row.Scan(&numRows)
+	if err != nil {
+		return false, err
+	}
+
+	if numRows > 0 {
+		return true, nil
+	}
+
+	return false, nil
 }
 
 func NewPostgresDBRepo(appConfigAsParam *config.AppConfig, db *sql.DB) repository.DatabaseRepository {

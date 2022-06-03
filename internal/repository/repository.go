@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/anonymfrominternet/Hotel/internal/models"
+import (
+	"github.com/anonymfrominternet/Hotel/internal/models"
+	"time"
+)
 
 type DatabaseRepository interface {
 	AllUsers() bool
@@ -8,4 +11,6 @@ type DatabaseRepository interface {
 	InsertReservation(reservation models.Reservation) (int, error)
 
 	InsertRoomRestriction(restriction models.RoomRestriction) error
+
+	IsRoomAvailable(roomId int, startDate, endDate time.Time) (bool, error)
 }
