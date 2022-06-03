@@ -109,6 +109,8 @@ func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *ht
 
 // ReservationSummary is a GET handler for the reservation-summary page
 func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *http.Request) {
+	// Getting the data from the request context and putting it to AppConfig.Session and trying to type assertion
+	// This data was added in the PostReservation handler
 	reservationPageInputs, ok := repo.AppConfig.Session.Get(request.Context(),
 		"reservationPageInputs").(models.Reservation)
 	if !ok {
@@ -117,6 +119,7 @@ func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *
 		http.Redirect(writer, request, "/", http.StatusTemporaryRedirect)
 		return
 	}
+
 	repo.AppConfig.Session.Remove(request.Context(), "reservationPageInputs")
 	data := make(map[string]interface{})
 	data["reservationPageInputs"] = reservationPageInputs
@@ -158,15 +161,18 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 	startDate, err := time.Parse(datesLayout, startDateAsString)
 	if err != nil {
 		helpers.ServerError(writer, err)
+		return
 	}
 	endDate, err := time.Parse(datesLayout, endDateAsString)
 	if err != nil {
 		helpers.ServerError(writer, err)
+		return
 	}
 
 	roomId, err := strconv.Atoi(request.Form.Get("room_id"))
 	if err != nil {
 		helpers.ServerError(writer, err)
+		return
 	}
 
 	reservationPageInputs := models.Reservation{
@@ -196,12 +202,27 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 		return
 	}
 
-	// Adding info to db
-	err = repo.DB.InsertReservation(reservationPageInputs)
+	// Adding info to db, to the Reservations Table, and getting id of new added item from this table
+	reservationId, err := repo.DB.InsertReservation(reservationPageInputs)
 	if err != nil {
 		helpers.ServerError(writer, err)
+		return
 	}
 	// Adding info to db
+
+	// Creating RoomRestriction and adding this data to the db, in the RoomRestrictions table
+	restriction := models.RoomRestriction{
+		StartDate:     startDate,
+		EndDate:       endDate,
+		RoomId:        roomId,
+		ReservationId: reservationId,
+		RestrictionId: 1,
+	}
+	err = repo.DB.InsertRoomRestriction(restriction)
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
 
 	repo.AppConfig.Session.Put(request.Context(), "reservationPageInputs", reservationPageInputs)
 	http.Redirect(writer, request, "/reservation-summary", http.StatusSeeOther)
