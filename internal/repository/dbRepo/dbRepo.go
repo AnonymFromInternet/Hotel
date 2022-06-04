@@ -77,8 +77,7 @@ func (postgresDBRepo *postgresDBRepo) IsRoomAvailable(roomId int, startDate, end
 	defer cancel()
 
 	var numRows int
-	query := `
-				select
+	query := `select
 					count(id)
 				from room_restrictions
 				where 
@@ -103,6 +102,42 @@ func (postgresDBRepo *postgresDBRepo) IsRoomAvailable(roomId int, startDate, end
 	}
 
 	return false, nil
+}
+
+// AllAvailableRooms gets all available rooms, which correspond to given dates
+func (postgresDBRepo *postgresDBRepo) AllAvailableRooms(startDate, endDate time.Time) ([]models.Room, error) {
+	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
+	defer cancel()
+
+	var rooms []models.Room
+
+	query := `
+			select
+				r.id, r.room_name
+			from
+				rooms r
+			where r.id not in (select room_id from room_restrictions rr where $1 < rr.end_date and $2 > rr.end_date);
+`
+	rows, err := postgresDBRepo.DB.QueryContext(context, query, startDate, endDate)
+	if err != nil {
+		return rooms, err
+	}
+
+	for rows.Next() {
+		var room models.Room
+		err := rows.Scan(&room.ID, &room.RoomName)
+		if err != nil {
+			return rooms, nil
+		}
+
+		rooms = append(rooms, room)
+	}
+
+	if err = rows.Err(); err != nil {
+		return rooms, err
+	}
+
+	return rooms, nil
 }
 
 func NewPostgresDBRepo(appConfigAsParam *config.AppConfig, db *sql.DB) repository.DatabaseRepository {
