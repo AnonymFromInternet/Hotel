@@ -10,6 +10,7 @@ import (
 	"github.com/anonymfrominternet/Hotel/internal/render"
 	"github.com/anonymfrominternet/Hotel/internal/repository"
 	"github.com/anonymfrominternet/Hotel/internal/repository/dbRepo"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
 	"time"
@@ -128,6 +129,27 @@ func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *
 	})
 }
 
+// ChooseRoomWithId is the GET handler for the Choose-Room page
+func (repo *Repository) ChooseRoomWithId(writer http.ResponseWriter, request *http.Request) {
+	roomID, err := strconv.Atoi(chi.URLParam(request, "id"))
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+
+	reservation, ok := repo.AppConfig.Session.Get(request.Context(), "reservation").(models.Reservation)
+	if !ok {
+		helpers.ServerError(writer, err)
+		return
+	}
+
+	reservation.RoomId = roomID
+
+	repo.AppConfig.Session.Put(request.Context(), "reservation", reservation)
+
+	http.Redirect(writer, request, "/reservation", http.StatusSeeOther)
+}
+
 // GET HANDLERS
 
 // POST HANDLERS
@@ -170,6 +192,7 @@ func (repo *Repository) PostAvailability(writer http.ResponseWriter, request *ht
 		StartDate: startDate,
 		EndDate:   endDate,
 	}
+
 	repo.AppConfig.Session.Put(request.Context(), "reservation", reservation)
 
 	render.Template(writer, request, "choose-room.page.tmpl", &models.TemplateData{Data: data})

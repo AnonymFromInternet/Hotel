@@ -7,9 +7,14 @@
                 <h1 class="text-center mt-3">Choose room</h1>
 
                 {{$rooms := index .Data "rooms"}}
-                {{range $rooms}}
-                    {{.RoomName}}
-                {{end}}
+
+                <ul>
+                    {{range $rooms}}
+                        <li>
+                            <a href="/choose-room/{{.ID}}">{{.RoomName}}</a>
+                        </li>
+                    {{end}}
+                </ul>
             </div>
         </div>
     </div>
