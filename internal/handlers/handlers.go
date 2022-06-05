@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/driver"
 	"github.com/anonymfrominternet/Hotel/internal/forms"
@@ -136,12 +135,44 @@ func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *
 // PostAvailability is a POST handler for the search-availability page
 func (repo *Repository) PostAvailability(writer http.ResponseWriter, request *http.Request) {
 	// Getting data from form by the POST method
-	start := request.Form.Get("start_date")
-	end := request.Form.Get("end_date")
+	startDateInString := request.Form.Get("start_date")
+	endDateInString := request.Form.Get("end_date")
 	// Getting data from form by the POST method
 
-	_, _ = writer.Write([]byte(fmt.Sprintf("Start is %s, end is %s", start, end)))
+	datesLayout := "2006-01-02"
+	startDate, err := time.Parse(datesLayout, startDateInString)
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+	endDate, err := time.Parse(datesLayout, endDateInString)
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
 
+	rooms, err := repo.DB.AllAvailableRooms(startDate, endDate)
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+
+	if len(rooms) == 0 {
+		repo.AppConfig.Session.Put(request.Context(), "Error", "no available rooms")
+		http.Redirect(writer, request, "/search-availability", http.StatusSeeOther)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["rooms"] = rooms
+
+	reservation := models.Reservation{
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+	repo.AppConfig.Session.Put(request.Context(), "reservation", reservation)
+
+	render.Template(writer, request, "choose-room.page.tmpl", &models.TemplateData{Data: data})
 }
 
 // PostReservation is a POST handler for the reservation page
