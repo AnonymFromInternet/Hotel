@@ -15,7 +15,7 @@
         </div>
         <div class="row">
             <div class="col text-center">
-                <a href="#!" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Check availability</a>
+                <button id="btn-modal" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Check availability</button>
             </div>
         </div>
     </div>
@@ -72,7 +72,18 @@
 
             fetch("/search-availability-json", {method: "post", body: formData}).then(response => response.json()).then(data => {
                 if (data.ok) {
-                    notify("success", "Room is available")
+                    notify("success", "Room is available");
+                    // Добавить функционал по всплыванию нового модального, которое будет позволять переходить на страницу резерва
+                    // body append <div class="modal-backdrop fade show"></div> and self modal
+                    //let newModal = document.createElement("div")
+                    //newModal.innerHTML = `
+                       //<h1>Room is available</h1>
+                    //`
+                    //document.body.append(newModal)
+                    let button = document.getElementById('btn-modal')
+                    button.classList.remove("btn-success")
+                    button.classList.add("btn-primary")
+                    button.innerText = `Book Now`
                 } else {
                     notify("error", "room is not available")
                 }
