@@ -77,27 +77,29 @@ func (postgresDBRepo *postgresDBRepo) IsRoomAvailable(roomId int, startDate, end
 	defer cancel()
 
 	var numRows int
+
 	query := `select
 					count(id)
 				from room_restrictions
 				where 
 				    room_id = $1
-				    2$ < start_date or $3 > end_date;
+				    and $2 < end_date and $3 > start_date;
 			`
+
 	row := postgresDBRepo.DB.QueryRowContext(context, query,
 		roomId,
-		endDate,
 		startDate,
+		endDate,
 	)
-
-	fmt.Println("number of rows is ", numRows)
 
 	err := row.Scan(&numRows)
 	if err != nil {
 		return false, err
 	}
 
-	if numRows > 0 {
+	fmt.Println("number of rows is ", numRows)
+
+	if numRows == 0 {
 		return true, nil
 	}
 

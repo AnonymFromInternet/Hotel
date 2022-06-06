@@ -107,28 +107,6 @@ func (repo *Repository) Reservation(writer http.ResponseWriter, request *http.Re
 	})
 }
 
-type jsonResponse struct {
-	OK      bool   `json:"ok"`
-	Message string `json:"message"`
-}
-
-// AvailabilityJSON is a GET handler. This handler sends back JSON data about availability
-func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *http.Request) {
-	response := jsonResponse{
-		OK:      true,
-		Message: "Available",
-	}
-
-	out, err := json.MarshalIndent(response, "", "   ")
-	if err != nil {
-		helpers.ServerError(writer, err)
-		return
-	}
-
-	writer.Header().Set("Content-Type", "application/json")
-	_, _ = writer.Write(out)
-}
-
 // ReservationSummary is a GET handler for the reservation-summary page
 func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *http.Request) {
 	// Getting the data from the request context and putting it to AppConfig.Session and trying to type assertion
@@ -287,6 +265,55 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 	repo.AppConfig.Session.Put(request.Context(), "reservation", reservation)
 	http.Redirect(writer, request, "/reservation-summary", http.StatusSeeOther)
 
+}
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+// AvailabilityJSON is a POST handler. This handler sends back JSON data about availability
+func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *http.Request) {
+	sd := request.Form.Get("start_date")
+	ed := request.Form.Get("end_date")
+
+	layout := "2006-01-02"
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+
+	roomId, err := strconv.Atoi(request.Form.Get("room_id"))
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+
+	isAvailable, err := repo.DB.IsRoomAvailable(roomId, startDate, endDate)
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+
+	response := jsonResponse{
+		OK:      isAvailable,
+		Message: "",
+	}
+
+	out, err := json.MarshalIndent(response, "", "   ")
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	_, _ = writer.Write(out)
 }
 
 // POST HANDLERS
