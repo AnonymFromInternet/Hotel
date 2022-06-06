@@ -56,10 +56,6 @@
 
 {{define "js"}}
     <script>
-        const toReservation = () => {
-            console.log("to reservation")
-        }
-
         const sendData = () => {
             let startDate = document.getElementById("start_date").value
             let endDate = document.getElementById("end_date").value
@@ -79,12 +75,13 @@
                     notify("success", "Room is available");
 
                     let buttonModal = document.getElementById('btn-modal')
-                    let newElement = document.createElement("button")
+                    let newElement = document.createElement("a")
                     newElement.classList.add("btn")
                     newElement.classList.add("btn-primary")
+                    newElement.classList.add("btn-lg")
                     newElement.innerText = "Book Now"
+                    newElement.setAttribute("href", "/reservation")
                     buttonModal.parentNode.replaceChild(newElement, buttonModal)
-                    newElement.addEventListener("click", toReservation)
                 } else {
                     notify("error", "room is not available")
                 }

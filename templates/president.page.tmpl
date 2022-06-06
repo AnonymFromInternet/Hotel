@@ -15,39 +15,77 @@
         </div>
         <div class="row">
             <div class="col text-center">
-                <a href="#!" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Check availability</a>
+                <button id="btn-modal" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">Check availability</button>
             </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Choose your dates</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col">
-                            <div class="mb-3">
-                                <label for="start_date" class="form-label">Start date</label>
-                                <input required type="date" class="form-control" name="start_date" id="start_date">
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="mb-3">
-                                <label for="end_date" class="form-label">End Date</label>
-                                <input required type="date" class="form-control" name="end_date" id="end_date">
-                            </div>
-                        </div>
+    <form id="form" action="" method="post">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Choose your dates</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label for="start_date" class="form-label">Start date</label>
+                                    <input required type="date" class="form-control" name="start_date" id="start_date">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input required type="date" class="form-control" name="end_date" id="end_date">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button onclick="sendData()" type="button" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
+{{end}}
+
+{{define "js"}}
+    <script>
+        const sendData = () => {
+            let startDate = document.getElementById("start_date").value
+            let endDate = document.getElementById("end_date").value
+
+            if (startDate === undefined || startDate === null || startDate === "" || endDate === undefined || endDate === null || endDate === "") {
+                notify("error", "Dates are empty")
+                return
+            }
+
+            let form = document.getElementById("form")
+            let formData = new FormData(form)
+            formData.append("csrf_token", "{{.CSRFToken}}")
+            formData.append("room_id", "2")
+
+            fetch("/search-availability-json", {method: "post", body: formData}).then(response => response.json()).then(data => {
+                if (data.ok) {
+                    notify("success", "Room is available");
+
+                    let buttonModal = document.getElementById('btn-modal')
+                    let newElement = document.createElement("a")
+                    newElement.classList.add("btn")
+                    newElement.classList.add("btn-primary")
+                    newElement.classList.add("btn-lg")
+                    newElement.innerText = "Book Now"
+                    newElement.setAttribute("href", "/reservation")
+                    buttonModal.parentNode.replaceChild(newElement, buttonModal)
+                } else {
+                    notify("error", "room is not available")
+                }
+            })
+        }
+    </script>
 {{end}}

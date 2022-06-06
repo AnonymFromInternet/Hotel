@@ -312,6 +312,14 @@ func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *ht
 		return
 	}
 
+	reservation := models.Reservation{
+		StartDate: startDate,
+		EndDate:   endDate,
+		RoomId:    roomId,
+	}
+
+	repo.AppConfig.Session.Put(request.Context(), "reservation", reservation)
+
 	writer.Header().Set("Content-Type", "application/json")
 	_, _ = writer.Write(out)
 }
