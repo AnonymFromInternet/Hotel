@@ -86,8 +86,9 @@ func (repo *Repository) Reservation(writer http.ResponseWriter, request *http.Re
 		helpers.ServerError(writer, err)
 		return
 	}
-
 	reservation.Room.RoomName = room.RoomName
+
+	repo.AppConfig.Session.Put(request.Context(), "reservation", reservation)
 
 	startDate := reservation.StartDate.Format("2006-01-02")
 	endDate := reservation.EndDate.Format("2006-01-02")
@@ -132,7 +133,7 @@ func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *ht
 func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *http.Request) {
 	// Getting the data from the request context and putting it to AppConfig.Session and trying to type assertion
 	// This data was added in the PostReservation handler
-	reservationPageInputs, ok := repo.AppConfig.Session.Get(request.Context(),
+	reservation, ok := repo.AppConfig.Session.Get(request.Context(),
 		"reservation").(models.Reservation)
 	if !ok {
 		repo.AppConfig.ErrorLog.Println("Cannot get data from reservation")
@@ -143,10 +144,15 @@ func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *
 
 	repo.AppConfig.Session.Remove(request.Context(), "reservation")
 	data := make(map[string]interface{})
-	data["reservation"] = reservationPageInputs
+	data["reservation"] = reservation
+
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = reservation.StartDate.Format("2006-01-02")
+	stringMap["end_date"] = reservation.EndDate.Format("2006-01-02")
 
 	render.Template(writer, request, "reservation-summary.page.tmpl", &models.TemplateData{
-		Data: data,
+		Data:      data,
+		StringMap: stringMap,
 	})
 }
 
@@ -221,44 +227,23 @@ func (repo *Repository) PostAvailability(writer http.ResponseWriter, request *ht
 
 // PostReservation is a POST handler for the reservation page
 func (repo *Repository) PostReservation(writer http.ResponseWriter, request *http.Request) {
+	reservation, ok := repo.AppConfig.Session.Get(request.Context(), "reservation").(models.Reservation)
+	if !ok {
+		helpers.ServerError(writer, errors.New("cannot cast data from session to Reservation"))
+		return
+	}
+
 	err := request.ParseForm()
 	if err != nil {
 		helpers.ServerError(writer, err)
 		return
 	}
 
-	// Getting data which was added by user in inputs
-	startDateAsString := request.Form.Get("start_date")
-	endDateAsString := request.Form.Get("end_date")
+	reservation.FirstName = request.Form.Get("first_name")
+	reservation.LastName = request.Form.Get("first_name")
+	reservation.Email = request.Form.Get("email")
+	reservation.Phone = request.Form.Get("phone")
 
-	datesLayout := "2006-01-02"
-
-	startDate, err := time.Parse(datesLayout, startDateAsString)
-	if err != nil {
-		helpers.ServerError(writer, err)
-		return
-	}
-	endDate, err := time.Parse(datesLayout, endDateAsString)
-	if err != nil {
-		helpers.ServerError(writer, err)
-		return
-	}
-
-	roomId, err := strconv.Atoi(request.Form.Get("room_id"))
-	if err != nil {
-		helpers.ServerError(writer, err)
-		return
-	}
-
-	reservationPageInputs := models.Reservation{
-		FirstName: request.Form.Get("first_name"),
-		LastName:  request.Form.Get("last_name"),
-		Email:     request.Form.Get("email"),
-		Phone:     request.Form.Get("phone"),
-		StartDate: startDate,
-		EndDate:   endDate,
-		RoomId:    roomId,
-	}
 	// Getting data which was added by user in inputs
 
 	form := forms.New(request.PostForm)
@@ -268,7 +253,7 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
-		data["reservation"] = reservationPageInputs
+		data["reservation"] = reservation
 
 		render.Template(writer, request, "reservation.page.tmpl", &models.TemplateData{
 			Form: form,
@@ -278,7 +263,7 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 	}
 
 	// Adding info to db, to the Reservations Table, and getting id of new added item from this table
-	reservationId, err := repo.DB.InsertReservation(reservationPageInputs)
+	reservationId, err := repo.DB.InsertReservation(reservation)
 	if err != nil {
 		helpers.ServerError(writer, err)
 		return
@@ -287,9 +272,9 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 
 	// Creating RoomRestriction and adding this data to the db, in the RoomRestrictions table
 	restriction := models.RoomRestriction{
-		StartDate:     startDate,
-		EndDate:       endDate,
-		RoomId:        roomId,
+		StartDate:     reservation.StartDate,
+		EndDate:       reservation.EndDate,
+		RoomId:        reservation.RoomId,
 		ReservationId: reservationId,
 		RestrictionId: 1,
 	}
@@ -299,7 +284,7 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 		return
 	}
 
-	repo.AppConfig.Session.Put(request.Context(), "reservation", reservationPageInputs)
+	repo.AppConfig.Session.Put(request.Context(), "reservation", reservation)
 	http.Redirect(writer, request, "/reservation-summary", http.StatusSeeOther)
 
 }
