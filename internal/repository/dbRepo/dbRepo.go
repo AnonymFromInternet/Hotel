@@ -140,6 +140,27 @@ func (postgresDBRepo *postgresDBRepo) AllAvailableRooms(startDate, endDate time.
 	return rooms, nil
 }
 
+// GetRoomById gets a room by given id from db
+func (postgresDBRepo *postgresDBRepo) GetRoomById(roomId int) (models.Room, error) {
+	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
+	defer cancel()
+
+	var room models.Room
+
+	query := `
+			select id, room_name, created_at, updated_at from rooms where id = $1
+`
+	row := postgresDBRepo.DB.QueryRowContext(context, query,
+		roomId)
+
+	err := row.Scan(&room.ID, &room.RoomName, &room.CreatedAt, &room.UpdatedAt)
+	if err != nil {
+		return room, err
+	}
+	return room, nil
+
+}
+
 func NewPostgresDBRepo(appConfigAsParam *config.AppConfig, db *sql.DB) repository.DatabaseRepository {
 	return &postgresDBRepo{
 		AppConfig: appConfigAsParam,

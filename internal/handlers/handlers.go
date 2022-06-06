@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/driver"
 	"github.com/anonymfrominternet/Hotel/internal/forms"
@@ -75,13 +76,33 @@ func (repo *Repository) Contact(writer http.ResponseWriter, request *http.Reques
 
 // Reservation is a GET handler for the reservation page
 func (repo *Repository) Reservation(writer http.ResponseWriter, request *http.Request) {
-	var emptyReservation models.Reservation
+	reservation, ok := repo.AppConfig.Session.Get(request.Context(), "reservation").(models.Reservation)
+	if !ok {
+		helpers.ServerError(writer, errors.New("error by getting reservation from session"))
+		return
+	}
+	room, err := repo.DB.GetRoomById(reservation.RoomId)
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+
+	reservation.Room.RoomName = room.RoomName
+
+	startDate := reservation.StartDate.Format("2006-01-02")
+	endDate := reservation.EndDate.Format("2006-01-02")
+
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = startDate
+	stringMap["end_date"] = endDate
+
 	data := make(map[string]interface{})
-	data["reservationPageInputs"] = emptyReservation
+	data["reservation"] = reservation
 
 	render.Template(writer, request, "reservation.page.tmpl", &models.TemplateData{
-		Form: forms.New(nil),
-		Data: data,
+		Form:      forms.New(nil),
+		Data:      data,
+		StringMap: stringMap,
 	})
 }
 
@@ -112,7 +133,7 @@ func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *
 	// Getting the data from the request context and putting it to AppConfig.Session and trying to type assertion
 	// This data was added in the PostReservation handler
 	reservationPageInputs, ok := repo.AppConfig.Session.Get(request.Context(),
-		"reservationPageInputs").(models.Reservation)
+		"reservation").(models.Reservation)
 	if !ok {
 		repo.AppConfig.ErrorLog.Println("Cannot get data from reservation")
 		repo.AppConfig.Session.Put(request.Context(), "Error", "Cannot get data from reservation")
@@ -120,9 +141,9 @@ func (repo *Repository) ReservationSummary(writer http.ResponseWriter, request *
 		return
 	}
 
-	repo.AppConfig.Session.Remove(request.Context(), "reservationPageInputs")
+	repo.AppConfig.Session.Remove(request.Context(), "reservation")
 	data := make(map[string]interface{})
-	data["reservationPageInputs"] = reservationPageInputs
+	data["reservation"] = reservationPageInputs
 
 	render.Template(writer, request, "reservation-summary.page.tmpl", &models.TemplateData{
 		Data: data,
@@ -247,7 +268,7 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
-		data["reservationPageInputs"] = reservationPageInputs
+		data["reservation"] = reservationPageInputs
 
 		render.Template(writer, request, "reservation.page.tmpl", &models.TemplateData{
 			Form: form,
@@ -278,7 +299,7 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 		return
 	}
 
-	repo.AppConfig.Session.Put(request.Context(), "reservationPageInputs", reservationPageInputs)
+	repo.AppConfig.Session.Put(request.Context(), "reservation", reservationPageInputs)
 	http.Redirect(writer, request, "/reservation-summary", http.StatusSeeOther)
 
 }

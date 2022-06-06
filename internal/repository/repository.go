@@ -15,4 +15,6 @@ type DatabaseRepository interface {
 	IsRoomAvailable(roomId int, startDate, endDate time.Time) (bool, error)
 
 	AllAvailableRooms(startDate, endDate time.Time) ([]models.Room, error)
+
+	GetRoomById(roomId int) (models.Room, error)
 }
