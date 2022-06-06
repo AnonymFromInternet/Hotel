@@ -56,6 +56,10 @@
 
 {{define "js"}}
     <script>
+        const toReservation = () => {
+            console.log("to reservation")
+        }
+
         const sendData = () => {
             let startDate = document.getElementById("start_date").value
             let endDate = document.getElementById("end_date").value
@@ -73,17 +77,14 @@
             fetch("/search-availability-json", {method: "post", body: formData}).then(response => response.json()).then(data => {
                 if (data.ok) {
                     notify("success", "Room is available");
-                    // Добавить функционал по всплыванию нового модального, которое будет позволять переходить на страницу резерва
-                    // body append <div class="modal-backdrop fade show"></div> and self modal
-                    //let newModal = document.createElement("div")
-                    //newModal.innerHTML = `
-                       //<h1>Room is available</h1>
-                    //`
-                    //document.body.append(newModal)
-                    let button = document.getElementById('btn-modal')
-                    button.classList.remove("btn-success")
-                    button.classList.add("btn-primary")
-                    button.innerText = `Book Now`
+
+                    let buttonModal = document.getElementById('btn-modal')
+                    let newElement = document.createElement("button")
+                    newElement.classList.add("btn")
+                    newElement.classList.add("btn-primary")
+                    newElement.innerText = "Book Now"
+                    buttonModal.parentNode.replaceChild(newElement, buttonModal)
+                    newElement.addEventListener("click", toReservation)
                 } else {
                     notify("error", "room is not available")
                 }
