@@ -56,7 +56,7 @@ func getRoutes() http.Handler {
 	appConfig.TemplateCache = templateCache
 	appConfig.UseCache = true
 
-	repo := NewRepo(&appConfig)
+	repo := NewTestRepo(&appConfig)
 	NewHandlers(repo)
 
 	render.NewRenderer(&appConfig)

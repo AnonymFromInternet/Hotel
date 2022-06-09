@@ -27,6 +27,10 @@ func main() {
 	}
 	defer db.SQL.Close()
 
+	defer close(appConfig.MailChan)
+
+	listenForMail()
+
 	// Server configuration
 	server := http.Server{
 		Addr:    portNumber,
@@ -56,6 +60,10 @@ func run() (*driver.DB, error) {
 	gob.Register(models.RoomRestriction{})
 	gob.Register(models.Restriction{})
 	// Adding custom data types to scs.SessionManager
+
+	// Creating a channel and putting it in to the session
+	mailChan := make(chan models.MailData)
+	appConfig.MailChan = mailChan
 
 	// State Management configuration
 	session = scs.New()

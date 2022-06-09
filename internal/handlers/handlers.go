@@ -262,6 +262,25 @@ func (repo *Repository) PostReservation(writer http.ResponseWriter, request *htt
 		return
 	}
 
+	// Sending email to client
+	htmlMessage := "Reservation Confirmation"
+	messageToClient := models.MailData{
+		To:      reservation.Email,
+		From:    "n@n.com",
+		Subject: "Reservation",
+		Content: htmlMessage,
+	}
+	repo.AppConfig.MailChan <- messageToClient
+
+	// Sending email to owner
+	messageToOwner := models.MailData{
+		To:      "owner@com.com",
+		From:    reservation.Email,
+		Subject: "Reservation from a client",
+		Content: htmlMessage,
+	}
+	repo.AppConfig.MailChan <- messageToOwner
+
 	repo.AppConfig.Session.Put(request.Context(), "reservation", reservation)
 	http.Redirect(writer, request, "/reservation-summary", http.StatusSeeOther)
 
@@ -325,3 +344,14 @@ func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *ht
 }
 
 // POST HANDLERS
+
+// Testing section
+
+func NewTestRepo(appConfigAsParam *config.AppConfig) *Repository {
+	return &Repository{
+		AppConfig: appConfigAsParam,
+		DB:        dbRepo.NewTestPostgresDBRepo(appConfigAsParam),
+	}
+}
+
+// Testing section
