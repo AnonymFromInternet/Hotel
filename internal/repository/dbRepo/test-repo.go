@@ -45,3 +45,14 @@ func (testPostgresDBRepo *TestPostgresDBRepo) GetRoomById(roomId int) (models.Ro
 	var room models.Room
 	return room, nil
 }
+
+func (testPostgresDBRepo *TestPostgresDBRepo) GetUserByID(userId int) (models.User, error) {
+	var user models.User
+	return user, nil
+}
+func (testPostgresDBRepo *TestPostgresDBRepo) UpdateUser(user models.User) error {
+	return nil
+}
+func (testPostgresDBRepo *TestPostgresDBRepo) Authenticate(email, testPassword string) (int, string, error) {
+	return 0, "", nil
+}

@@ -3,10 +3,12 @@ package dbRepo
 import (
 	context2 "context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/anonymfrominternet/Hotel/internal/config"
 	"github.com/anonymfrominternet/Hotel/internal/models"
 	"github.com/anonymfrominternet/Hotel/internal/repository"
+	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -119,7 +121,7 @@ func (postgresDBRepo *postgresDBRepo) AllAvailableRooms(startDate, endDate time.
 			from
 				rooms r
 			where r.id in (select rr.room_id from room_restrictions rr where $1 > rr.end_date or $2 < rr.start_date);
-`
+			`
 	rows, err := postgresDBRepo.DB.QueryContext(context, query, startDate, endDate)
 	if err != nil {
 		return rooms, err
@@ -151,7 +153,7 @@ func (postgresDBRepo *postgresDBRepo) GetRoomById(roomId int) (models.Room, erro
 
 	query := `
 			select id, room_name, created_at, updated_at from rooms where id = $1
-`
+			`
 	row := postgresDBRepo.DB.QueryRowContext(context, query,
 		roomId)
 
@@ -163,6 +165,75 @@ func (postgresDBRepo *postgresDBRepo) GetRoomById(roomId int) (models.Room, erro
 
 }
 
+// GetUserByID returns a user by a given user id
+func (postgresDBRepo *postgresDBRepo) GetUserByID(userId int) (models.User, error) {
+	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
+	defer cancel()
+
+	var user models.User
+	query := `select id, first_name, last_name, email, password, access_level, crated_at, updated_at
+				from users
+				where id = $1
+			`
+	row := postgresDBRepo.DB.QueryRowContext(context, query, userId)
+	err := row.Scan(
+		&user.ID,
+		&user.FirstName,
+		&user.LastName,
+		&user.Email,
+		&user.Password,
+		&user.AccessLevel,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+// UpdateUser updates a user in a db
+func (postgresDBRepo *postgresDBRepo) UpdateUser(user models.User) error {
+	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `update users set first_name = $1, last_name = $2, email = $3, access_level = $4, updated_at = $5`
+	_, err := postgresDBRepo.DB.ExecContext(context, query, user.FirstName, user.LastName, user.Email, user.AccessLevel,
+		user.UpdatedAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Authenticate checks if a given email and password correspond with actual data from db
+func (postgresDBRepo postgresDBRepo) Authenticate(email, testPassword string) (int, string, error) {
+	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
+	defer cancel()
+
+	var userId int
+	var hashedPassword string
+
+	query := `select id, password from users where email = $1`
+	row := postgresDBRepo.DB.QueryRowContext(context, query, email)
+
+	err := row.Scan(&userId, &hashedPassword)
+	if err != nil {
+		return userId, "", err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(testPassword), []byte(hashedPassword))
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		return 0, "", errors.New("incorrect password")
+	} else if err != nil {
+		return 0, "", err
+	}
+
+	return userId, hashedPassword, nil
+}
+
+// NewPostgresDBRepo brings data to the handlers package
 func NewPostgresDBRepo(appConfigAsParam *config.AppConfig, db *sql.DB) repository.DatabaseRepository {
 	return &postgresDBRepo{
 		AppConfig: appConfigAsParam,
