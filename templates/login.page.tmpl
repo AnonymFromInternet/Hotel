@@ -10,13 +10,13 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="login" class="form-label">Login</label>
+                                <label for="email" class="form-label">Login</label>
 
-                                {{with .Form.Errors.Get "login"}}
+                                {{with .Form.Errors.Get "email"}}
                                     <label class="text-danger">{{.}}</label>
                                 {{end}}
 
-                                <input value="" type="text" class="form-control {{with .Form.Errors.Get "login"}} is-invalid {{end}}" name="login" id="login" autocomplete="off">
+                                <input value="" type="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}" name="email" id="email" autocomplete="off">
                             </div>
 
                             <div class="mb-3">

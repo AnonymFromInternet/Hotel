@@ -26,6 +26,7 @@ func routes(appConfig *config.AppConfig) http.Handler {
 	mux.Get("/reservation", handlers.Repo.Reservation)
 	mux.Get("/reservation-summary", handlers.Repo.ReservationSummary)
 	mux.Get("/choose-room/{id}", handlers.Repo.ChooseRoomWithId)
+	mux.Get("/user/login", handlers.Repo.Login)
 	// GET Requests Handlers
 
 	// POST Requests Handlers

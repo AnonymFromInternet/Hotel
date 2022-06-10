@@ -155,6 +155,11 @@ func (repo *Repository) ChooseRoomWithId(writer http.ResponseWriter, request *ht
 	http.Redirect(writer, request, "/reservation", http.StatusSeeOther)
 }
 
+// Login is the GET handler for the login page
+func (repo *Repository) Login(writer http.ResponseWriter, request *http.Request) {
+	render.Template(writer, request, "login.page.tmpl", &models.TemplateData{Form: forms.New(nil)})
+}
+
 // GET HANDLERS
 
 // POST HANDLERS
