@@ -6,7 +6,7 @@
             <div class="col">
                 <h1 class="text-center mt-3">Login Page</h1>
 
-                <form action="/user/login" method="post">
+                <form action="/user/login" method="post" novalidate>
                     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                     <div class="row">
                         <div class="col">

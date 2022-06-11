@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/anonymfrominternet/Hotel/internal/helpers"
 	"github.com/justinas/nosurf"
 	"net/http"
 )
@@ -23,4 +24,16 @@ func NoSurfMiddleware(next http.Handler) http.Handler {
 
 func SessionLoadMiddleware(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
+}
+
+// AuthMiddleware checks for a token to check if a user is logged in or not
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if !helpers.IsAuthenticated(request) {
+			session.Put(request.Context(), "error", "You must be logged in")
+			http.Redirect(writer, request, "/user/login", http.StatusSeeOther)
+			return
+		}
+		next.ServeHTTP(writer, request)
+	})
 }

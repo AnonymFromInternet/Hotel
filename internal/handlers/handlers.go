@@ -360,10 +360,10 @@ func (repo *Repository) PostLogin(writer http.ResponseWriter, request *http.Requ
 	}
 
 	form := forms.New(request.PostForm)
-	form.Required("name", "password")
+	form.Required("email", "password")
+	form.IsEmail("email")
 	if !form.Valid() {
-		log.Println("empty fields on login page")
-		http.Redirect(writer, request, "/user/login", http.StatusSeeOther)
+		render.Template(writer, request, "login.page.tmpl", &models.TemplateData{Form: form})
 		return
 	}
 
