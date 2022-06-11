@@ -33,6 +33,7 @@ func routes(appConfig *config.AppConfig) http.Handler {
 	mux.Post("/search-availability", handlers.Repo.PostAvailability)
 	mux.Post("/search-availability-json", handlers.Repo.AvailabilityJSON)
 	mux.Post("/reservation", handlers.Repo.PostReservation)
+	mux.Post("/user/login", handlers.Repo.PostLogin)
 	// POST Requests Handlers
 
 	// Adding file server

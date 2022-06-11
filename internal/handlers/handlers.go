@@ -12,6 +12,7 @@ import (
 	"github.com/anonymfrominternet/Hotel/internal/repository"
 	"github.com/anonymfrominternet/Hotel/internal/repository/dbRepo"
 	"github.com/go-chi/chi/v5"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -346,6 +347,38 @@ func (repo *Repository) AvailabilityJSON(writer http.ResponseWriter, request *ht
 
 	writer.Header().Set("Content-Type", "application/json")
 	_, _ = writer.Write(out)
+}
+
+// PostLogin is the POST handler for the login page
+func (repo *Repository) PostLogin(writer http.ResponseWriter, request *http.Request) {
+	_ = repo.AppConfig.Session.RenewToken(request.Context())
+
+	err := request.ParseForm()
+	if err != nil {
+		log.Println("error by parsing form in PostLogin")
+		return
+	}
+
+	form := forms.New(request.PostForm)
+	form.Required("name", "password")
+	if !form.Valid() {
+		log.Println("empty fields on login page")
+		http.Redirect(writer, request, "/user/login", http.StatusSeeOther)
+		return
+	}
+
+	email := request.Form.Get("email")
+	password := request.Form.Get("password")
+	userId, _, err := repo.DB.Authenticate(email, password)
+	if err != nil {
+		repo.AppConfig.Session.Put(request.Context(), "error", "incorrect email or password")
+		http.Redirect(writer, request, "/user/login", http.StatusSeeOther)
+		return
+	}
+
+	repo.AppConfig.Session.Put(request.Context(), "user_id", userId)
+	repo.AppConfig.Session.Put(request.Context(), "success", "You are successfully logged in")
+	http.Redirect(writer, request, "/", http.StatusSeeOther)
 }
 
 // POST HANDLERS
