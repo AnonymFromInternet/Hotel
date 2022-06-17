@@ -38,3 +38,11 @@
         </div>
     </div>
 {{end}}
+
+{{define "js"}}
+    <script>
+        if ({{index .Data "error"}}) {
+            notify("error", {{index .Data "error"}})
+        }
+    </script>
+{{end}}

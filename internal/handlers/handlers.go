@@ -161,8 +161,12 @@ func (repo *Repository) ChooseRoomWithId(writer http.ResponseWriter, request *ht
 
 // Login is the GET handler for the login page
 func (repo *Repository) Login(writer http.ResponseWriter, request *http.Request) {
+	err := repo.AppConfig.Session.Get(request.Context(), "error")
+	data := make(map[string]interface{})
+	data["error"] = err
 	render.Template(writer, request, "login.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
+		Data: data,
 	})
 }
 
@@ -171,6 +175,11 @@ func (repo *Repository) Logout(writer http.ResponseWriter, request *http.Request
 	_ = repo.AppConfig.Session.Destroy(request.Context())
 	_ = repo.AppConfig.Session.RenewToken(request.Context())
 	http.Redirect(writer, request, "/", http.StatusSeeOther)
+}
+
+// AdminDashboard is a get handler for
+func (repo *Repository) AdminDashboard(writer http.ResponseWriter, request *http.Request) {
+	_ = render.Template(writer, request, "admin-dashboard.page.tmpl", &models.TemplateData{})
 }
 
 // GET HANDLERS
