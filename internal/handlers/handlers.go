@@ -43,7 +43,10 @@ func NewHandlers(repo *Repository) {
 
 // MainPage is a GET handler for the main page
 func (repo *Repository) MainPage(writer http.ResponseWriter, request *http.Request) {
-	render.Template(writer, request, "main.page.tmpl", &models.TemplateData{})
+	data := make(map[string]interface{})
+	message := repo.AppConfig.Session.Get(request.Context(), "success")
+	data["success"] = message
+	render.Template(writer, request, "main.page.tmpl", &models.TemplateData{Data: data})
 }
 
 // AboutPage is a GET handler for the about page
@@ -158,7 +161,9 @@ func (repo *Repository) ChooseRoomWithId(writer http.ResponseWriter, request *ht
 
 // Login is the GET handler for the login page
 func (repo *Repository) Login(writer http.ResponseWriter, request *http.Request) {
-	render.Template(writer, request, "login.page.tmpl", &models.TemplateData{Form: forms.New(nil)})
+	render.Template(writer, request, "login.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	})
 }
 
 // GET HANDLERS
@@ -369,8 +374,10 @@ func (repo *Repository) PostLogin(writer http.ResponseWriter, request *http.Requ
 
 	email := request.Form.Get("email")
 	password := request.Form.Get("password")
-	userId, _, err := repo.DB.Authenticate(email, password)
+	userId, hashed, err := repo.DB.Authenticate(email, password)
 	if err != nil {
+		log.Println("error by validation")
+		log.Println("Data is:", userId, hashed)
 		repo.AppConfig.Session.Put(request.Context(), "error", "incorrect email or password")
 		http.Redirect(writer, request, "/user/login", http.StatusSeeOther)
 		return

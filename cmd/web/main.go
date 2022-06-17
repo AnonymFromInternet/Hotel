@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-const portNumber = "localhost:3000"
+const portNumber = "localhost:3006"
 
 var appConfig config.AppConfig
 var session *scs.SessionManager

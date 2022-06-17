@@ -53,3 +53,11 @@
         </div>
     </div>
 {{end}}
+
+{{define "js"}}
+    <script>
+        if ({{index .Data "success"}}) {
+            notify("success", {{index .Data "success"}})
+        }
+    </script>
+{{end}}
