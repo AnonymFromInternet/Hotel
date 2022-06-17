@@ -59,7 +59,11 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="/user/login" class="nav-link">Login</a>
+                        {{ if .IsLoggedIn}}
+                            <a href="/user/logout" class="nav-link">Logout</a>
+                        {{ else }}
+                            <a href="/user/login" class="nav-link">Login</a>
+                        {{end}}
                     </li>
                 </ul>
             </div>

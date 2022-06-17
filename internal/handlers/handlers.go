@@ -166,6 +166,13 @@ func (repo *Repository) Login(writer http.ResponseWriter, request *http.Request)
 	})
 }
 
+// Logout is the GET handler. It logs a user out
+func (repo *Repository) Logout(writer http.ResponseWriter, request *http.Request) {
+	_ = repo.AppConfig.Session.Destroy(request.Context())
+	_ = repo.AppConfig.Session.RenewToken(request.Context())
+	http.Redirect(writer, request, "/", http.StatusSeeOther)
+}
+
 // GET HANDLERS
 
 // POST HANDLERS
