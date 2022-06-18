@@ -17,7 +17,7 @@ func routes(appConfig *config.AppConfig) http.Handler {
 	mux.Use(SessionLoadMiddleware)
 	// Adding middlewares
 
-	// GET Requests Handlers
+	// GET Requests Handlers. User Section
 	mux.Get("/", handlers.Repo.MainPage)
 	mux.Get("/about", handlers.Repo.AboutPage)
 	mux.Get("/generals", handlers.Repo.Generals)
@@ -29,22 +29,24 @@ func routes(appConfig *config.AppConfig) http.Handler {
 	mux.Get("/choose-room/{id}", handlers.Repo.ChooseRoomWithId)
 	mux.Get("/user/login", handlers.Repo.Login)
 	mux.Get("/user/logout", handlers.Repo.Logout)
-	// GET Requests Handlers
+	// GET Requests Handlers. User Section
 
-	// POST Requests Handlers
+	// POST Requests Handlers. User Section
 	mux.Post("/search-availability", handlers.Repo.PostAvailability)
 	mux.Post("/search-availability-json", handlers.Repo.AvailabilityJSON)
 	mux.Post("/reservation", handlers.Repo.PostReservation)
 	mux.Post("/user/login", handlers.Repo.PostLogin)
-	// POST Requests Handlers
+	// POST Requests Handlers. User Section
 
-	// Secure pages Section
+	// Admin Section
 	mux.Route("/admin", func(r chi.Router) {
 		r.Use(AuthMiddleware)
 
 		r.Get("/dashboard", handlers.Repo.AdminDashboard)
+		r.Get("/create-new-reservation", handlers.Repo.AdminCreateNewReservation)
+		r.Get("/all-reservations", handlers.Repo.AdminAllReservations)
 	})
-	// Secure pages Section
+	// Admin Section
 
 	// Adding file server
 	fileServer := http.FileServer(http.Dir("../../static/"))

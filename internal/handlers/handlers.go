@@ -177,9 +177,19 @@ func (repo *Repository) Logout(writer http.ResponseWriter, request *http.Request
 	http.Redirect(writer, request, "/", http.StatusSeeOther)
 }
 
-// AdminDashboard is a get handler for
+// AdminDashboard is a get handler for AdminDashboard page
 func (repo *Repository) AdminDashboard(writer http.ResponseWriter, request *http.Request) {
 	_ = render.Template(writer, request, "admin-dashboard.page.tmpl", &models.TemplateData{})
+}
+
+// AdminAllReservations is a get handler for AdminAllReservations page
+func (repo *Repository) AdminAllReservations(writer http.ResponseWriter, request *http.Request) {
+	_ = render.Template(writer, request, "admin-all-reservations.page.tmpl", &models.TemplateData{})
+}
+
+// AdminCreateNewReservation is a get handler for AdminCreateNewReservation page
+func (repo *Repository) AdminCreateNewReservation(writer http.ResponseWriter, request *http.Request) {
+	_ = render.Template(writer, request, "admin-create-new-reservation.page.tmpl", &models.TemplateData{})
 }
 
 // GET HANDLERS

@@ -1,0 +1,32 @@
+{{template "admin" .}}
+
+{{define "content"}}
+    <div class="offset-1 col-8" style="border: 1px solid #0d6efd; border-radius: 3px; padding: 8px">
+        <h4 style="margin-bottom: 33px" class="text-center">Create new Reservation</h4>
+        <div class="row" style="margin: 6px">
+            <div class="col-6">
+                <label class="form-label" for="startDate">Start Date</label>
+                <div class="input-group mb-3">
+                    <input id="startDate" type="date" class="form-control" placeholder="Start Date" aria-label="Start Date" aria-describedby="basic-addon1">
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin: 6px">
+            <div class="col-6">
+                <label class="form-label" for="endDate">End Date</label>
+                <div class="input-group mb-3">
+                    <input id="endDate" type="date" class="form-control" placeholder="End Date" aria-label="End Date" aria-describedby="basic-addon1">
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin: 6px">
+            <div class="col-6">
+                <div class="input-group mb-3">
+                    <textarea class="form-control" placeholder="Description for this Reservation" aria-label="Description" aria-describedby="basic-addon1"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
