@@ -7,3 +7,4 @@ This is the repository for Hotel site
 - Uses [nosurf](https://github.com/justinas/nosurf)
 - Uses [Bootstrap](https://getbootstrap.com/)
 - Uses [Govalidator](https://github.com/asaskevich/govalidator)
+- Uses [Simple-DataTables](https://github.com/fiduswriter/Simple-DataTables)

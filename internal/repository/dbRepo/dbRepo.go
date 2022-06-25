@@ -127,6 +127,8 @@ func (postgresDBRepo *postgresDBRepo) AllAvailableRooms(startDate, endDate time.
 		return rooms, err
 	}
 
+	defer rows.Close()
+
 	for rows.Next() {
 		var room models.Room
 		err := rows.Scan(&room.ID, &room.RoomName)
@@ -208,7 +210,7 @@ func (postgresDBRepo *postgresDBRepo) UpdateUser(user models.User) error {
 }
 
 // Authenticate checks if a given email and password correspond with actual data from db
-func (postgresDBRepo postgresDBRepo) Authenticate(email, testPassword string) (int, string, error) {
+func (postgresDBRepo *postgresDBRepo) Authenticate(email, testPassword string) (int, string, error) {
 	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
 	defer cancel()
 
@@ -231,6 +233,62 @@ func (postgresDBRepo postgresDBRepo) Authenticate(email, testPassword string) (i
 	}
 
 	return userId, hashedPassword, nil
+}
+
+// AllReservations gets the list with all reservations for all rooms
+func (postgresDBRepo *postgresDBRepo) AllReservations() ([]models.Reservation, error) {
+	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
+	defer cancel()
+
+	var reservations []models.Reservation
+
+	query := `
+			select r.id, r.first_name, r.last_name, r.email, r.phone, r.start_date, r.end_date, r.room_id,
+			r.created_at, r.updated_at,
+			rm.id, rm.room_name
+			from reservations r
+			left join rooms rm on (r.room_id = rm.id)
+			order by r.start_date asc
+			`
+
+	rows, err := postgresDBRepo.DB.QueryContext(context, query)
+	if err != nil {
+		fmt.Println("error in rows, err :=")
+		return reservations, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var row models.Reservation
+
+		err := rows.Scan(
+			&row.ID,
+			&row.FirstName,
+			&row.LastName,
+			&row.Email,
+			&row.Phone,
+			&row.StartDate,
+			&row.EndDate,
+			&row.RoomId,
+			&row.CreatedAt,
+			&row.UpdatedAt,
+			&row.Room.ID,
+			&row.Room.RoomName,
+		)
+		if err != nil {
+			fmt.Println("error in rows, for rows.Next()")
+			return reservations, err
+		}
+
+		reservations = append(reservations, row)
+	}
+
+	if err = rows.Err(); err != nil {
+		fmt.Println("if err = rows.Err()")
+		return reservations, err
+	}
+
+	return reservations, nil
 }
 
 // NewPostgresDBRepo brings data to the handlers package

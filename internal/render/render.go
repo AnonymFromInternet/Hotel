@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"time"
 )
 
 var appConfig *config.AppConfig
@@ -20,7 +21,14 @@ func NewRenderer(appConfigAsParam *config.AppConfig) {
 	appConfig = appConfigAsParam
 }
 
-var functions = template.FuncMap{}
+var functions = template.FuncMap{
+	"formattedDate": FormattedDate,
+}
+
+// FormattedDate formats dates in short format
+func FormattedDate(time time.Time) string {
+	return time.Format("2006-01-02")
+}
 
 func AddDefaultData(templateData *models.TemplateData, request *http.Request) *models.TemplateData {
 	templateData.Message = appConfig.Session.PopString(request.Context(), "Message")

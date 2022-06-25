@@ -184,7 +184,16 @@ func (repo *Repository) AdminDashboard(writer http.ResponseWriter, request *http
 
 // AdminAllReservations is a get handler for AdminAllReservations page
 func (repo *Repository) AdminAllReservations(writer http.ResponseWriter, request *http.Request) {
-	_ = render.Template(writer, request, "admin-all-reservations.page.tmpl", &models.TemplateData{})
+	reservations, err := repo.DB.AllReservations()
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+	var data = make(map[string]interface{})
+	data["reservations"] = reservations
+	_ = render.Template(writer, request, "admin-all-reservations.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
 }
 
 // AdminCreateNewReservation is a get handler for AdminCreateNewReservation page

@@ -56,3 +56,7 @@ func (testPostgresDBRepo *TestPostgresDBRepo) UpdateUser(user models.User) error
 func (testPostgresDBRepo *TestPostgresDBRepo) Authenticate(email, testPassword string) (int, string, error) {
 	return 0, "", nil
 }
+func (testPostgresDBRepo *TestPostgresDBRepo) AllReservations() ([]models.Reservation, error) {
+	var reservations []models.Reservation
+	return reservations, nil
+}
