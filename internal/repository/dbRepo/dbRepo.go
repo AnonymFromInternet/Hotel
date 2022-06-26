@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+// In this file are functions, that allow to interact with db
+
 type postgresDBRepo struct {
 	AppConfig *config.AppConfig
 	DB        *sql.DB
@@ -289,6 +291,46 @@ func (postgresDBRepo *postgresDBRepo) AllReservations() ([]models.Reservation, e
 	}
 
 	return reservations, nil
+}
+
+// GetReservationById gets reservation from the db by the given ID
+func (postgresDBRepo *postgresDBRepo) GetReservationById(reservationId int) (models.Reservation, error) {
+	context, cancel := context2.WithTimeout(context2.Background(), 3*time.Second)
+	defer cancel()
+
+	var reservation models.Reservation
+
+	query := `
+			select r.id, r.first_name, r.last_name, r.email, r.phone, r.start_date, r.end_date, r.room_id,
+			r.created_at, r.updated_at,
+			rm.id, rm.room_name
+			from reservations r
+			left join rooms rm on (r.room_id = rm.id)
+			where r.id = $1
+`
+
+	row := postgresDBRepo.DB.QueryRowContext(context, query, reservationId)
+
+	err := row.Scan(
+		&reservation.ID,
+		&reservation.FirstName,
+		&reservation.LastName,
+		&reservation.Email,
+		&reservation.Phone,
+		&reservation.StartDate,
+		&reservation.EndDate,
+		&reservation.RoomId,
+		&reservation.CreatedAt,
+		&reservation.UpdatedAt,
+		&reservation.Room.ID,
+		&reservation.Room.RoomName,
+	)
+
+	if err != nil {
+		return reservation, err
+	}
+
+	return reservation, nil
 }
 
 // NewPostgresDBRepo brings data to the handlers package

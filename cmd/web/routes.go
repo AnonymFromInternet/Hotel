@@ -40,11 +40,20 @@ func routes(appConfig *config.AppConfig) http.Handler {
 
 	// Admin Section
 	mux.Route("/admin", func(r chi.Router) {
+		// MIDDLEWARES
 		r.Use(AuthMiddleware)
+		// MIDDLEWARES
 
+		// GET handlers
 		r.Get("/dashboard", handlers.Repo.AdminDashboard)
 		r.Get("/create-new-reservation", handlers.Repo.AdminCreateNewReservation)
 		r.Get("/all-reservations", handlers.Repo.AdminAllReservations)
+		r.Get("/reservations/all/{id}", handlers.Repo.AdminReservationEditing)
+		// GET handlers
+
+		// POST handlers
+		r.Post("/all-reservations", handlers.Repo.PostAdminAllReservations)
+		// POST handlers
 	})
 	// Admin Section
 

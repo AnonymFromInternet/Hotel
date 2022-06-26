@@ -1,0 +1,72 @@
+{{template "admin" .}}
+
+{{define "content"}}
+    <div class="offset-1 col-8">
+
+
+        <div style="border: 1px solid #0d6efd; border-radius: 3px; padding: 8px">
+            {{$reservation := index .Data "reservation"}}
+            <h4 style="margin-bottom: 33px" class="text-center">Reservation Info</h4>
+            <div class="row" style="margin: 6px">
+                <div class="col-6">
+                    <strong>Room</strong>
+                    <p>{{$reservation.Room.RoomName}}</p>
+                </div>
+            </div>
+            <hr>
+
+            <form action="/admin/all-reservations" method="post">
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                <div class="row" style="margin: 6px">
+                    <div class="col-6">
+                        <strong>Client First Name</strong>
+                        <div class="input-group mb-3">
+                            <input id="firstName" type="text" value="{{$reservation.FirstName}}" class="form-control {{with .Form.Errors.Get "first_name"}} is-invalid {{end}}" placeholder="First name" aria-label="firstName" aria-describedby="basic-addon1" required>
+                        </div>
+                    </div>
+                </div>
+            <div class="row" style="margin: 6px">
+                <div class="col-6">
+                    <strong>Client Last Name</strong>
+                    <div class="input-group mb-3">
+                        <input id="lastName" type="text" value="{{$reservation.LastName}}" class="form-control {{with .Form.Errors.Get "last_name"}} is-invalid {{end}}" placeholder="Last name" aria-label="lastName" aria-describedby="basic-addon1" required>
+                    </div>
+                </div>
+            </div>
+            <hr>
+
+            <div class="row" style="margin: 6px">
+                <div class="col-6">
+                    <strong>Arrival</strong>
+                    <p>{{formattedDate $reservation.StartDate}}</p>
+                    <label class="form-label" for="startDate">New Arrival</label>
+                    <div class="input-group mb-3">
+                        <input id="startDate" type="date" class="form-control" placeholder="Start Date" aria-label="Start Date" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin: 6px">
+                <div class="col-6">
+                    <strong>Departure</strong>
+                    <p>{{formattedDate $reservation.EndDate}}</p>
+                    <label class="form-label" for="startDate">New Departure</label>
+                    <div class="input-group mb-3">
+                        <input id="endDate" type="date" class="form-control" placeholder="End Date" aria-label="End Date" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+            </div>
+            <hr>
+
+            <div class="row" style="margin: 6px">
+                <div class="col-4">
+                    <button type="submit" class="btn btn-warning mb-1">Go back to all Reservations</button>
+                    <button type="submit" class="btn btn-danger mb-1">Delete this reservation</button>
+                </div>
+            </div>
+            </form>
+            <div style="padding-left: 18px">
+                <button class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+{{end}}

@@ -15,6 +15,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -199,6 +200,29 @@ func (repo *Repository) AdminAllReservations(writer http.ResponseWriter, request
 // AdminCreateNewReservation is a get handler for AdminCreateNewReservation page
 func (repo *Repository) AdminCreateNewReservation(writer http.ResponseWriter, request *http.Request) {
 	_ = render.Template(writer, request, "admin-create-new-reservation.page.tmpl", &models.TemplateData{})
+}
+
+// AdminReservationEditing is the GET handler for the reservation details and editing page
+func (repo *Repository) AdminReservationEditing(writer http.ResponseWriter, request *http.Request) {
+	urlParts := strings.Split(request.RequestURI, "/")
+
+	id, err := strconv.Atoi(urlParts[4])
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+	reservation, err := repo.DB.GetReservationById(id)
+	if err != nil {
+		helpers.ServerError(writer, err)
+		return
+	}
+	data := make(map[string]interface{})
+	data["reservation"] = reservation
+
+	_ = render.Template(writer, request, "admin-reservation-editing.page.tmpl", &models.TemplateData{
+		Data: data,
+		Form: forms.New(nil),
+	})
 }
 
 // GET HANDLERS
@@ -421,6 +445,13 @@ func (repo *Repository) PostLogin(writer http.ResponseWriter, request *http.Requ
 	repo.AppConfig.Session.Put(request.Context(), "user_id", userId)
 	repo.AppConfig.Session.Put(request.Context(), "success", "You are successfully logged in")
 	http.Redirect(writer, request, "/", http.StatusSeeOther)
+}
+
+// PostAdminAllReservations is a POST handler for the admin-reservation-editing page
+func (repo *Repository) PostAdminAllReservations(writer http.ResponseWriter, request *http.Request) {
+	// can get the new data from db and then redirect for GET AdminAllReservations
+
+	http.Redirect(writer, request, "/admin/all-reservations", http.StatusSeeOther)
 }
 
 // POST HANDLERS
